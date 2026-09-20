@@ -228,6 +228,9 @@ details.rev .rev-body { padding: 10px; }
   font-size: 11px; color: var(--text-faint); flex: 0 0 auto;
 }
 .statusbar a { color: var(--text-dim); text-decoration: none; }
+
+a.link { color: var(--accent); text-decoration: none; }
+a.link:hover { text-decoration: underline; }
 .statusbar a:hover { color: var(--accent); text-decoration: underline; }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
 

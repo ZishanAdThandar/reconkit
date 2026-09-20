@@ -88,8 +88,9 @@ docs/                  documentation
 
 ## Credits
 
-ReconKit is an open research companion project. Author site:
-[zishanhack.com/about/](https://zishanhack.com/about/) · link collection:
-[zishanhack.com/links/](https://zishanhack.com/links/)
+ReconKit is an open research companion project by
+**ZishanAdThandar** ([Firefox Add-ons profile](https://addons.mozilla.org/en-US/firefox/user/10398388/)).
+Author site: [zishanhack.com/about/](https://zishanhack.com/about/) · link
+collection: [zishanhack.com/links/](https://zishanhack.com/links/)
 
 MIT License.

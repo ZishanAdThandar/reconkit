@@ -115,11 +115,13 @@ Rec.views.settings = (() => {
         ['Extension ID', browser.runtime.id],
         ['Manifest', 'WebExtension (Manifest V ' + m.manifest_version + ')'],
         ['Mode', Rec.inSidebar ? 'sidebar' : 'full tab'],
-        ['Author links', 'about · links (see footer)'],
+        ['Author', m.author || '—'],
         ['License', 'MIT']
       ]),
       h('div', { class: 'small faint', style: 'margin-top:8px' },
-        'ReconKit is a local-first research utility. Review docs in the repository for architecture, permissions and how to extend the toolset.')
+        'ReconKit is a local-first research utility. Review docs in the repository for architecture, permissions and how to extend the toolset. '),
+      h('a', { class: 'link small', href: 'https://addons.mozilla.org/en-US/firefox/user/10398388/', target: '_blank', rel: 'noopener noreferrer' },
+        'Add-ons profile: ZishanAdThandar')
     ]);
   }
 
