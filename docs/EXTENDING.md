@@ -40,8 +40,8 @@ Append an entry to `SERVICES` in `services/services.js`:
 - `build(ctx)` receives `{ url, host, rootDomain, protocol, port, ip, isIp,
   searchValue }`. For search-style engines use `c.searchValue` (host or URL,
   or IP).
-- Set `requires: 'file'` + `note` for file-analysis services; those appear in
-  the Files view only and stay behind the consent gate.
+- Set `note` if the service uploads submitted data or stores queries; the
+  views render it as a warning so users can decide before clicking.
 - No new code in views is required — the OSINT/DNS views and context menu pick
   the catalog up automatically.
 
@@ -69,8 +69,8 @@ In `background/context-menu.js`:
 - **Locality**: new tools must not require network; new fetches need a declared
   `host_permissions` entry and a PRIVACY.md note.
 - **IDs**: a tool/service `id` is stable API once shipped.
-- **Consent**: anything that would send a user’s file or secrets off-device
-  needs explicit, documented consent (see the Files view pattern).
+- **Consent**: anything that would send a user’s data or secrets off-device
+  needs explicit, documented consent.
 - **Tests**: any new lib logic ships with vectors in `test/run-tests.mjs`.
 - **Docs**: update `docs/USER_GUIDE.md` (feature) and `docs/ARCHITECTURE.md`
   (structure) with the change.

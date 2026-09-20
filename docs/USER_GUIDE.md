@@ -19,8 +19,9 @@ workflows: open the site you are researching, then analyze.
 
 ## Tools
 
-Pick a tool on the left, type (or paste) input, set options, and press
-**Run** (`Ctrl+Enter`). Every tool is local and instant.
+Pick a tool from the **dropdown at the top** (grouped by category), type (or
+paste) input, set options, and press **Run** (`Ctrl+Enter`). Every tool is
+local and instant.
 
 | Tool | Notes |
 | --- | --- |
@@ -104,29 +105,15 @@ Enter a hostname or IP (or use the current tab):
 - **Related passive intelligence** — one-row shortcuts to the OSINT services
   that apply to this target.
 
-## Files
-
-Drop a file anywhere on the panel (or click to browse). Everything is local:
-
-- file name/size/MIME/type by **magic bytes**, SHA-256 + MD5 of the exact bytes
-- Shannon entropy profile (detect encrypted/compressed vs plaintext payloads)
-- printable strings with offsets
-- image dimensions, **PNG text chunks**, **JPEG EXIF** (camera, timestamps,
-  GPS with a maps link when present)
-
-External stego/metadata services stay hidden until you opt in. Consent is
-stored locally and can be removed anytime.
-
 ## Settings
 
-- **Appearance** — ReconKit is dark-only. The moon button in the header
-  (or Ctrl+K → *Dark reader*) darkens the **content of the current web page**
-  with a local invert style; click again to restore it to normal. The state is
-  per tab and fully local.
 - **Optional permission** — enable *Enhanced cookie analysis* (`cookies`) with
   one click; disable the same way.
 - **Data & privacy** — clear local caches, export/import settings as JSON.
 - **About** — version, extension ID, manifest details.
+- The **dark reader** (moon button in the header, or Ctrl+K → *Dark reader*)
+  darkens the content of the current web page with a local invert style; click
+  again to restore it. Per tab and fully local.
 
 ## Keyboard shortcuts
 

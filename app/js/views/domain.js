@@ -123,15 +123,22 @@ Rec.views.domain = (() => {
     return wrap;
   }
 
+  function targetHost() {
+    const t = Rec.target || {};
+    if (t.host) return t.host;
+    if (t.url) { try { return new URL(t.url).hostname.toLowerCase(); } catch (e) {} }
+    return '';
+  }
+
   function render() {
     const view = el('view-domain');
     view.replaceChildren();
-    const host = targetInput.trim() || (Rec.target && Rec.target.host) || '';
+    const host = targetInput.trim() || targetHost();
     view.appendChild(h('div', { class: 'card' }, [
       h('h3', {}, 'Target'),
       h('div', { class: 'row' }, [
         h('input', { id: 'domain-target', type: 'text', placeholder: 'domain, hostname or IP', value: targetInput, style: 'flex:1', oninput: (e) => { targetInput = e.target.value; } }),
-        h('button', { class: 'btn', onclick: () => { targetInput = (Rec.target && Rec.target.host) || ''; render(); } }, 'Use current tab'),
+        h('button', { class: 'btn', onclick: () => { targetInput = targetHost(); render(); } }, 'Use current tab'),
         h('button', { class: 'btn primary', onclick: () => render() }, 'Investigate')
       ])
     ]));
@@ -188,9 +195,11 @@ Rec.views.domain = (() => {
       'Queries go only to dns.google (DoH), crt.sh and ipinfo.io. Other services open in your browser on demand.'));
   }
 
-  function open(params) {
+  async function open(params) {
     if (params && params.url) { try { targetInput = new URL(params.url).hostname; } catch (e) { targetInput = params.url; } }
     else if (params && params.host) targetInput = params.host;
+    // Pull a fresh target so the current URL is detected every time the view opens.
+    try { await Rec.target.refresh(); } catch (e) { /* background sleeping */ }
     render();
   }
 

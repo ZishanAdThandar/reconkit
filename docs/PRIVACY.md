@@ -18,9 +18,8 @@ access**:
 - Encryption identification, base conversion, RSA math, case transforms,
   text statistics, random generators
 - JWT decode and HMAC verification (a secret you enter is never transmitted)
-- **All file analysis**: type detection by magic bytes, hashes, entropy,
-  strings, image dimensions, PNG text chunks, JPEG EXIF/GPS. Files never leave
-  your device through ReconKit.
+- No file analysis is shipped — nothing about your files ever leaves the
+  browser through ReconKit.
 
 ## No collection
 
@@ -50,9 +49,6 @@ service, under that service’s own terms.
 
 **Additional consent paths:**
 
-- The **Files** view hides external analysis tools behind explicit consent
-  (“I understand — show services”), because using them typically means uploading
-  your file to a third party. Consent is stored locally and reversible.
 - The **optional permission** `cookies` (cookie flags/HttpOnly visibility) is
   enabled solely by the user in the Settings view and can be revoked there.
   (Firefox does not support `dns` as an optional permission, so system-resolver
@@ -60,7 +56,8 @@ service, under that service’s own terms.
 
 ## What we do not do
 
-- We do not auto-upload files, screenshots, or extracted metadata.
+- We do not auto-upload files, screenshots, or extracted metadata — and no file
+  analysis tools are shipped at all.
 - We do not read HTTP request/response bodies anywhere (the header probe uses
   `HEAD`, and the `GET` fallback never reads the body).
 - We do not store passwords, secrets, or session tokens; cookie *values* shown

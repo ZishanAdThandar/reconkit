@@ -6,7 +6,7 @@
 var Rec = window.Rec = window.Rec || {};
 
 Rec.settings = (() => {
-  const defaults = { theme: 'dark', consent: { externalFileServices: false } };
+  const defaults = { theme: 'dark' };
   let cache = null;
   async function get() {
     if (cache) return cache;
@@ -92,7 +92,7 @@ Rec.darkPage = (() => {
 })();
 
 Rec.nav = (() => {
-  const VIEW_IDS = ['tools', 'analyzer', 'recon', 'domain', 'files', 'settings'];
+  const VIEW_IDS = ['tools', 'analyzer', 'recon', 'domain', 'settings'];
   let current = 'tools';
   let pendingPayload = null;
 
@@ -136,9 +136,28 @@ Rec.target = {
       } else {
         this.tabId = null; this.url = null; this.host = null; this.rootDomain = null;
       }
-      renderChip();
     } catch (e) { /* background not ready */ }
+    // Fallback: derive the target straight from the popup window when the
+    // background could not resolve it (asleep, wrong-window quirk, whatever).
+    if (!this.host) await this._deriveFromTabs();
+    renderChip();
     return this;
+  },
+  async _deriveFromTabs() {
+    if (typeof browser === 'undefined' || !browser.tabs || !browser.tabs.query) return;
+    try {
+      const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+      const tab = tabs && tabs[0];
+      if (!tab || !tab.url) return;
+      const u = new URL(tab.url);
+      if (!/^https?:$/.test(u.protocol)) return;
+      const host = u.hostname.toLowerCase();
+      this.tabId = tab.id;
+      this.url = u.href;
+      this.host = host;
+      this.rootDomain = (typeof RekLib !== 'undefined' && RekLib.rootDomain) ? RekLib.rootDomain(host) : host;
+      this.title = tab.title || null;
+    } catch (e) { /* restricted page or parse error */ }
   }
 };
 
@@ -239,10 +258,8 @@ async function init() {
   // Route to initial view (hash decides; payload may override)
   await consumePayload();
   const m = /^#\/([a-z]+)/.exec(location.hash || '');
-  const initial = m && ['tools', 'analyzer', 'recon', 'domain', 'files', 'settings'].includes(m[1]) ? m[1] : null;
+  const initial = m && ['tools', 'analyzer', 'recon', 'domain', 'settings'].includes(m[1]) ? m[1] : null;
   Rec.nav.go(initial || 'tools');
-
-  // Files view initialises lazily via open().
 }
 
 document.addEventListener('DOMContentLoaded', init);

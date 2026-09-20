@@ -12,7 +12,6 @@ const RK = {
   cache: new Map(),           // tabId -> snapshot
   defaults: {
     theme: 'dark',
-    consent: { externalFileServices: false },
     recentTargets: []
   }
 };
@@ -21,8 +20,14 @@ const RK = {
  * Utilities
  * ------------------------------------------------------------------ */
 async function activeTab() {
-  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
-  return tabs[0] || null;
+  try {
+    const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+    if (tabs[0]) return tabs[0];
+  } catch (e) { /* currentWindow mismatch */ }
+  try {
+    const tabs = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+    return tabs[0] || null;
+  } catch (e) { return null; }
 }
 
 function parseTargetFromUrl(url) {
@@ -144,8 +149,12 @@ browser.runtime.onMessage.addListener((msg, sender) => {
     }
     case 'rk:get-target': {
       return (async () => {
-        const tab = await activeTab();
-        if (!tab) return { target: null };
+        // Prefer the originating tab: popup and context-menu messages carry
+        // sender.tab — the tab the user was actually on. tabs.query from the
+        // event page can resolve to the wrong window in some Firefox popup
+        // configurations, so it is only used as a fallback here.
+        const tab = (sender && sender.tab && sender.tab.url) ? sender.tab : await activeTab();
+        if (!tab || !tab.url) return { target: null, tab: tab ? { id: tab.id } : null };
         return { target: parseTargetFromUrl(tab.url), tab: { id: tab.id, url: tab.url, title: tab.title } };
       })();
     }

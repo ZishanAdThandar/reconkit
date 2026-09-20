@@ -3,7 +3,7 @@
   "name": "ReconKit — Security Research Toolkit",
   "short_name": "ReconKit",
   "version": "1.0.0",
-  "description": "A privacy-first toolkit for security researchers and developers: crypto & text utilities, passive website analysis, OSINT lookups, DNS/ASN intelligence, and local file analysis. All core processing happens on your machine.",
+  "description": "A privacy-first toolkit for security researchers and developers: crypto & text utilities, passive website analysis, OSINT lookups, DNS/ASN intelligence. All core processing happens on your machine.",
   "author": "ZishanAdThandar",
   "homepage_url": "https://github.com/ZishanAdThandar/reconkit",
   "icons": {

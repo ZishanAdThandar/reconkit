@@ -19,20 +19,21 @@ Rec.views.tools = (() => {
   }
 
   function renderToolList() {
-    const cats = Rec.tools.categories.map((cat) => {
+    // A single grouped dropdown replaces the long pill column: 25 utilities
+    // in one compact, scrollable selector (optgroups per category).
+    const sel = h('select', {
+      id: 'tools-select', class: 'tools-select', title: 'Select a utility',
+      onchange: (e) => selectTool(e.target.value)
+    }, Rec.tools.categories.map((cat) => {
       const tools = Rec.tools.list.filter((t) => t.cat === cat.id);
       if (!tools.length) return null;
-      return h('div', {},
-        h('div', { class: 'cat-head' }, cat.name),
-        h('div', { class: 'tool-pill-list' }, tools.map((t) =>
-          h('button', {
-            class: 'tool-pill' + (t.id === activeId ? ' active' : ''),
-            onclick: () => selectTool(t.id)
-          }, t.name))));
-    }).filter(Boolean);
+      return h('optgroup', { label: cat.name }, tools.map((t) =>
+        h('option', { value: t.id, title: esc(t.desc) }, t.name)));
+    }).filter(Boolean));
     const box = el('tools-list');
     box.replaceChildren();
-    box.append(...cats);
+    box.appendChild(sel);
+    try { sel.value = activeId; } catch (e) { /* fall back to first option */ }
   }
 
   function selectTool(id) {

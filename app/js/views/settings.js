@@ -39,18 +39,6 @@ Rec.views.settings = (() => {
     return card;
   }
 
-  function appearanceCard() {
-    return h('div', { class: 'card' }, [
-      h('h3', {}, 'Appearance'),
-      h('div', { class: 'small muted', style: 'margin-bottom:8px' }, 'ReconKit is dark-only — the toolbar moon button instead darkens (or restores) the content of the current web page, per tab, whenever you want it.'),
-      h('div', { class: 'row' }, [
-        h('span', { class: 'tag acc' }, 'Dark only'),
-      ]),
-      h('div', { class: 'small faint', style: 'margin-top:8px' },
-        'The dark reader inverts the page’s content locally — nothing is sent anywhere, and a second click restores the page to normal.')
-    ]);
-  }
-
   function privacyCard() {
     return h('div', { class: 'card' }, [
       h('h3', {}, 'Data & privacy'),
@@ -58,10 +46,9 @@ Rec.views.settings = (() => {
         ['Telemetry', 'None. ReconKit does not collect or transmit usage data.'],
         ['Browsing history', 'Not read. Only the active tab is inspected when you ask for it.'],
         ['Page snapshots', 'Stored locally in memory (30 s cache) and used only to render analysis.'],
-        ['Local processing', 'All crypto, encoding, hashing and file analysis run on your device.'],
+        ['Local processing', 'All crypto, encoding, hashing and analysis run on your device.'],
         ['Network (opt-in)', 'DNS/IP lookups use dns.google, crt.sh and ipinfo.io. Targeted service links open in your browser when you click them.'],
-        ['Optional permissions', 'Cookies (flags/HttpOnly visibility) and DNS (system resolver) are opt-in only.'],
-        ['File uploads', 'Never automatic. External file tools are gated behind explicit consent.'],
+        ['Optional permissions', 'Cookies (flags/HttpOnly visibility) are opt-in only.'],
         ['API keys', 'No keys are stored or hard-coded.'],
         ['Third-party services', 'Operate under their own policies and may log your queries; review before use.']
       ]),
@@ -122,7 +109,6 @@ Rec.views.settings = (() => {
   function render() {
     const view = el('view-settings');
     view.replaceChildren();
-    view.appendChild(appearanceCard());
     view.appendChild(h('div', { class: 'card' }, [h('h3', {}, 'Optional permissions (opt-in)'),
       h('div', { class: 'small muted', style: 'margin-bottom:8px' }, 'ReconKit works fully without these. Enable them for deeper passive analysis; everything stays local.')]));
     view.appendChild(permCard('cookies', 'Enhanced cookie analysis',

@@ -5,8 +5,8 @@ Firefox — built as a single lightweight WebExtension with no build step.
 
 Everything is a small, dependency-free set of classic scripts: you are looking
 at the entire code base. Core processing (hashing, encoding, ciphertext
-wrangling, file analysis) runs **on your device**. External lookups are
-**opt-in, explicit, and clearly disclosed** — ReconKit never uploads your files,
+wrangling) runs **on your device**. External lookups are
+**opt-in, explicit, and clearly disclosed** — ReconKit never uploads your data,
 never reads your history beyond the active tab you point it at, and collects no
 telemetry.
 
@@ -23,7 +23,6 @@ telemetry.
 | **Website** | Passive snapshot of the current page: URL structure, meta data, technology markers, security/response headers (best-effort), links/forms/scripts inventory, page-visible cookies, plus an explicit “could not be determined” list |
 | **Recon** | Tech stack of the current page plus one-click lookups for a host/domain/IP across 40+ free public services (BuiltWith, Shodan, Censys, crt.sh quick links; search engines, code search, archives, passive DNS, domain/IP intelligence, security assessment) — built locally, opened in new tabs |
 | **DNS / IP** | Live DNS records (A/AAAA/CNAME/MX/NS/TXT via DoH), certificate transparency & subdomain harvesting (crt.sh), ASN/network metadata (ipinfo.io) |
-| **Files** | 100 % local file analysis: magic-byte type detection, SHA-256 & MD5, Shannon entropy, detectable strings, image dimensions, PNG text chunks, JPEG EXIF (incl. GPS). External file tools are **gated behind explicit consent** |
 | **Integration** | Right-click menus (analyze/decode/hash selection, page & link actions, one-tap lookups), keyboard shortcuts (Alt+Shift+R popup, Alt+Shift+A analyzer, Ctrl+K palette), dark-only UI with a per-page dark reader toggle (moon button), command palette |
 
 The extension ID is `reconkit@zishanhack.com`. Firefox 115+, Manifest V3.
@@ -56,8 +55,8 @@ Or during development: `npm start` (web-ext run).
 - **Targeted network only.** DNS/IP queries go to `dns.google`, `crt.sh` and
   `ipinfo.io` (host permissions, listed in `manifest.json`). Everything else
   opens as a normal browser tab in the service you *click*.
-- **Files never auto-upload.** Sending a file to an external service requires
-  explicit consent in the Files view.
+- **Files never auto-upload, by design.** No file analysis is shipped; nothing
+  is ever sent anywhere.
 - **Optional permission** (`cookies`) is opt-in from Settings and can
   be revoked at any time.
 

@@ -15,7 +15,6 @@ Rec.palette = (() => {
       { cat: 'action', label: 'Analyze current website', run: () => Rec.nav.go('analyzer') },
       { cat: 'action', label: 'Recon lookups for current target', run: () => Rec.nav.go('recon') },
       { cat: 'action', label: 'DNS / IP intelligence', run: () => Rec.nav.go('domain') },
-      { cat: 'action', label: 'Analyze a local file', run: () => Rec.nav.go('files') },
       { cat: 'action', label: 'Dark reader: darken / restore this page', run: () => Rec.darkPage.toggle() },
       { cat: 'action', label: 'Copy current hostname', run: () => Rec.target && Rec.target.host && Rec.ui.copyText(Rec.target.host) },
       { cat: 'action', label: 'Copy current URL', run: () => Rec.target && Rec.target.url && Rec.ui.copyText(Rec.target.url) },

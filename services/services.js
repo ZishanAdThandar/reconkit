@@ -159,21 +159,7 @@
       build: (c) => `https://observatory.mozilla.org/analyze/${t(c.host)}` },
     { id: 'ssllabs', group: 'Security assessment', name: 'SSL Labs', quote: false,
       target: ['host'],
-      build: (c) => `https://www.ssllabs.com/ssltest/analyze.html?d=${t(c.host)}` },
-
-    // ---------------- File / stego external services (files page) ----------------
-    { id: 'stegonline', group: 'External file analysis', name: 'StegOnline', requires: 'file', note: 'Uploads the file to their server',
-      build: () => `https://stegonline.georgeom.net/upload` },
-    { id: 'aperisolve', group: 'External file analysis', name: "Aperi'Solve", requires: 'file', note: 'Uploads the file to their server',
-      build: () => `https://www.aperisolve.com/` },
-    { id: 'cyberchef', group: 'External file analysis', name: 'CyberChef', requires: 'file', note: 'Processing happens in your browser',
-      build: () => `https://gchq.github.io/CyberChef/` },
-    { id: 'forensically', group: 'External file analysis', name: 'Forensically (29a.ch)', requires: 'file', note: 'Processing happens in your browser',
-      build: () => `https://29a.ch/photo-forensics/` },
-    { id: 'exifdata', group: 'External file analysis', name: 'exif.tools — EXIF viewer', requires: 'file', note: 'Uploads the file to their server',
-      build: () => `https://exif.tools/` },
-    { id: 'jimpl', group: 'External file analysis', name: 'Jimpl — photo metadata', requires: 'file', note: 'Uploads the file to their server',
-      build: () => `https://www.jimpl.com/` }
+      build: (c) => `https://www.ssllabs.com/ssltest/analyze.html?d=${t(c.host)}` }
   ];
 
   // ---- helpers ----
@@ -248,11 +234,5 @@
     return { groups, order, links, ctx };
   }
 
-  function fileTools() {
-    return SERVICES.filter((s) => s.requires === 'file').map((s) => ({
-      id: s.id, name: s.name, url: s.build({}), note: s.note, requires: 'file'
-    }));
-  }
-
-  g.RekServices = { SERVICES, buildContext, linksFor, groupedLinks, fileTools };
+  g.RekServices = { SERVICES, buildContext, linksFor, groupedLinks };
 })(typeof globalThis !== 'undefined' ? globalThis : this);

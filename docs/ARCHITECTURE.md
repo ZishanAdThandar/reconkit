@@ -11,7 +11,7 @@ lightweight.
 │  │ action popup                                          │  │
 │  │ app/ (HTML+CSS+JS views)          background/         │  │
 │  │  · Utilities / Website / Recon /  │ event page (MV3)  │  │
-│  │    DNS-IP / Files / Settings      │  · snapshot cache │  │
+│  │    DNS-IP / Settings              │  · snapshot cache │  │
 │  │  · dark reader · target chip      │  · RPC (rk:*)     │  │
 │  │                   │               │  · context menus  │  │
 │  └───────────────────┼───────────────┴───────────────────┘  │

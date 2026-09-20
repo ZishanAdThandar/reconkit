@@ -355,8 +355,10 @@ test('services: link building for domain & IP targets', () => {
   assert.ok(iplinks.some((l) => l.id === 'shodan-ip'));
   assert.ok(!iplinks.some((l) => l.id === 'crtsh'));
 
-  const files = globalThis.RekServices.fileTools();
-  assert.ok(files.some((f) => f.id === 'cyberchef'));
+  const files = globalThis.RekServices.SERVICES.filter((s) => s.requires === 'file');
+  assert.equal(files.length, 0, 'file-tool services removed with the Files view');
+  const hostGrouped = globalThis.RekServices.groupedLinks(dom);
+  assert.ok(!hostGrouped.order.includes('External file analysis'));
 });
 
 test('services: search chain across groups', () => {
