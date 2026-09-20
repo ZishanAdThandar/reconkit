@@ -53,9 +53,10 @@ service, under that service’s own terms.
 - The **Files** view hides external analysis tools behind explicit consent
   (“I understand — show services”), because using them typically means uploading
   your file to a third party. Consent is stored locally and reversible.
-- The **optional permissions** `cookies` (cookie flags/HttpOnly visibility) and
-  `dns` (system resolver) are enabled solely by the user in the Settings view
-  and can be revoked there.
+- The **optional permission** `cookies` (cookie flags/HttpOnly visibility) is
+  enabled solely by the user in the Settings view and can be revoked there.
+  (Firefox does not support `dns` as an optional permission, so system-resolver
+  features are not offered; DNS lookups go through public DoH instead.)
 
 ## What we do not do
 

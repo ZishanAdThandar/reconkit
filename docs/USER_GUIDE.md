@@ -109,8 +109,8 @@ stored locally and can be removed anytime.
 
 - **Appearance** — System / Dark (calm) / Light (paper). The header button
   toggles dark↔light instantly and persists the choice.
-- **Optional permissions** — enable *Enhanced cookie analysis* (`cookies`) and
-  *System DNS resolution* (`dns`) with one click; disable the same way.
+- **Optional permission** — enable *Enhanced cookie analysis* (`cookies`) with
+  one click; disable the same way.
 - **Data & privacy** — clear local caches, export/import settings as JSON.
 - **About** — version, extension ID, manifest details.
 

@@ -22,7 +22,8 @@ Rec.settings = (() => {
     try { await browser.storage.local.set({ settings: cur }); } catch (e) {}
     return cur;
   }
-  return { defaults, get, set };
+  function invalidate() { cache = null; }
+  return { defaults, get, set, invalidate };
 })();
 
 Rec.theme = (() => {

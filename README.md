@@ -58,7 +58,7 @@ Or during development: `npm start` (web-ext run).
   opens as a normal browser tab in the service you *click*.
 - **Files never auto-upload.** Sending a file to an external service requires
   explicit consent in the Files view.
-- **Optional permissions** (`cookies`, `dns`) are opt-in from Settings and can
+- **Optional permission** (`cookies`) is opt-in from Settings and can
   be revoked at any time.
 
 See [docs/PRIVACY.md](docs/PRIVACY.md) for the full statement.

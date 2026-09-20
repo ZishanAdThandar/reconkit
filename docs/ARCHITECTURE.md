@@ -82,7 +82,11 @@ lightweight.
 | `storage` | settings + payload handoff |
 | `clipboardWrite` | copy buttons |
 | `cookies` (optional) | Enhanced cookie analysis (flags/HttpOnly) — opt-in |
-| `dns` (optional) | system resolver lookups — opt-in |
+
+> Note: Firefox does not expose `dns` as an *optional* permission, so it is not
+> offered. System-resolver features would require requesting it in the manifest
+> as a fixed permission, which ReconKit deliberately avoids; DNS lookups use
+> public DoH instead (see host permissions).
 
 Host permissions cover only the three direct-fetch APIs: `crt.sh`,
 `dns.google`/`cloudflare-dns.com` (DoH), and `ipinfo.io`.

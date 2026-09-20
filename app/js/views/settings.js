@@ -93,8 +93,8 @@ Rec.views.settings = (() => {
           try {
             const j = JSON.parse(await f.text());
             if (typeof j !== 'object') throw new Error('bad JSON');
-            await browser.storage.local.set({ settings: Object.assign(Rec.settings.defaults, j) });
-            Rec.settings.cache = null;
+            await browser.storage.local.set({ settings: Object.assign({}, Rec.settings.defaults, j) });
+            Rec.settings.invalidate();
             await Rec.theme.apply();
             toast('Settings imported', 'ok');
             render();
