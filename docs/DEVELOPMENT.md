@@ -71,4 +71,4 @@ can be traced by opening the extension’s internal console via
 3. `npm run icons` if the brand changed
 4. `npm run build` produces `dist/reconkit-<version>.zip`
 5. Fresh-profile smoke test: popup opens & theme renders, analyze a page, one
-   OSINT link, DNS lookup, a file analysis, theme toggle, context menu actions
+   Recon lookup, DNS lookup, a file analysis, theme toggle, context menu actions

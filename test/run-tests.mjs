@@ -14,7 +14,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
 
 const LIBS = [
-  'lib/lib-core.js', 'lib/base64.js', 'lib/md5.js', 'lib/crc32.js',
+  'lib/lib-core.js', 'lib/base64.js', 'lib/encodings.js', 'lib/md5.js', 'lib/crc32.js',
   'lib/urlcode.js', 'lib/htmlcode.js', 'lib/rot.js', 'lib/caesar.js',
   'lib/xor.js', 'lib/jwt.js', 'lib/caseconv.js', 'lib/unicode.js',
   'lib/binary.js', 'lib/classic.js', 'lib/rsa.js', 'lib/random.js',
@@ -79,6 +79,67 @@ test('base64: tolerates whitespace and missing padding', () => {
   const s = L.base64.fromString('hello world');
   assert.equal(L.base64.toString(s.replace(/=+$/, '')), 'hello world');
   assert.equal(L.base64.toString('aGVs bG8g d29y bGQ='), 'hello world');
+});
+
+test('encodings: base32 RFC 4648 vectors', () => {
+  const e = L.encodings.base32;
+  assert.equal(e.encode(new Uint8Array(0)), '');
+  assert.equal(e.encode(Uint8Array.of(0x66)), 'MY======'); // 'f'
+  assert.equal(e.encode(Uint8Array.of(0x66, 0x6f)), 'MZXQ===='); // 'fo'
+  assert.equal(e.encode(Uint8Array.of(0x66, 0x6f, 0x6f)), 'MZXW6==='); // 'foo'
+  assert.equal(e.encode(L.encodeUTF8('foobar')), 'MZXW6YTBOI======');
+  assert.deepEqual(e.decode('MZXW6==='), Uint8Array.of(0x66, 0x6f, 0x6f));
+  assert.equal(L.decodeUTF8(e.decode('JBSWY3DP')), 'Hello'); // well-known
+  // tolerant: lowercase + missing padding
+  assert.equal(L.decodeUTF8(e.decode('jbswy3dp')), 'Hello');
+  assert.throws(() => e.decode('MZXW6===8'));
+});
+
+test('encodings: base58 vectors + round trips', () => {
+  const e = L.encodings.base58;
+  assert.equal(e.encode(new Uint8Array(0)), '');
+  assert.equal(e.encode(Uint8Array.of(0)), '1');
+  assert.deepEqual(e.decode('1'), Uint8Array.of(0));
+  // 'a' = 0x61 = 97 = 1*58 + 39 -> '2g'; '5' = 0x35 = 53 -> 'v'
+  assert.equal(e.encode(L.encodeUTF8('a')), '2g');
+  assert.equal(L.decodeUTF8(e.decode('2g')), 'a');
+  assert.equal(e.encode(L.encodeUTF8('5')), 'v');
+  assert.equal(L.decodeUTF8(e.decode('v')), '5');
+  for (const b of [[1, 2, 3], [0, 0, 1], [255, 255], [0]]) {
+    const u8 = Uint8Array.from(b);
+    assert.deepEqual(e.decode(e.encode(u8)), u8);
+  }
+  assert.throws(() => e.decode('0OIl')); // leading/trailing chars outside alphabet
+});
+
+test('encodings: conversion matrix (radix + byte encodings)', () => {
+  const c = (s, f, t) => L.encodings.convert(s, f, t);
+  // pure radix conversions
+  assert.equal(c('255', 'dec', 'hex'), 'ff');
+  assert.equal(c('ff', 'hex', 'dec'), '255');
+  assert.equal(c('255', 'dec', 'bin'), '11111111');
+  assert.equal(c('11111111', 'bin', 'oct'), '377');
+  assert.equal(c('377', 'oct', 'dec'), '255');
+  assert.equal(c('42', 'dec', 'b36'), '16');
+  // byte encodings
+  assert.equal(c('Hello', 'text', 'hex'), '48656c6c6f');
+  assert.equal(c('48656c6c6f', 'hex', 'text'), 'Hello');
+  assert.equal(c('Hello', 'text', 'b64'), 'SGVsbG8=');
+  assert.equal(c('SGVsbG8=', 'b64', 'text'), 'Hello');
+  assert.equal(c('SGVsbG8', 'b64u', 'text'), 'Hello'); // tolerant of std alphabet
+  assert.equal(c('Hello', 'text', 'b32'), 'JBSWY3DP');
+  assert.equal(c('JBSWY3DP', 'b32', 'text'), 'Hello');
+  assert.equal(c('48656c6c6f', 'hex', 'b64'), 'SGVsbG8=');
+  // mixed radix -> byte -> radix round trip
+  const b62 = c('hello world', 'text', 'b62');
+  assert.equal(c(b62, 'b62', 'text'), 'hello world');
+  const b58 = c('hello world', 'text', 'b58');
+  assert.equal(c(b58, 'b58', 'text'), 'hello world');
+  // identity + errors
+  assert.equal(c('  padded  ', 'text', 'text'), '  padded  ');
+  assert.throws(() => c('xyz', 'hex', 'dec'));
+  assert.throws(() => c('MZXW6===8', 'b32', 'text'));
+  assert.throws(() => c('ff', 'nosuch', 'hex'));
 });
 
 test('md5: RFC 1321 vectors', () => {
@@ -260,6 +321,14 @@ test('identify: hash & encoding', () => {
   assert.ok(b.hits.some((x) => x.name.includes('Base64')));
   const jwt = L.identify.encoding('eyJhbGciOiJIUzI1NiJ9.eyJhIjoiYiJ9.c2ln');
   assert.ok(jwt.hits[0].name.includes('JWT'));
+});
+
+test('detect: tech markers (generator + script sources)', () => {
+  const gen = L.detect.fromMetaGenerators('Hugo 0.120.0');
+  assert.ok(gen.some((t) => t.name === 'Hugo'));
+  const scripts = L.detect.fromScriptSources(['https://cdn.example.net/jquery-3.7.1.min.js', '/assets/app.js']);
+  assert.ok(scripts.some((t) => t.name === 'jQuery'));
+  assert.ok(L.detect.fromHost('cdnjs.cloudflare.com').some((t) => t.name.includes('Cloudflare')));
 });
 
 test('random: shapes', () => {

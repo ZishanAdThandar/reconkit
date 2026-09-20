@@ -1,7 +1,9 @@
 /**
- * ReconKit — OSINT / one-click lookups view.
- * Builds ready-to-open search URLs from the current target and opens them in
- * new tabs (external services are never embedded or bypassed).
+ * ReconKit — Recon view: tech stack of the current page + one-click lookups.
+ * Shows detected technologies for the active tab, quick links (BuiltWith,
+ * Shodan, Censys, crt.sh) built from the current domain, and the full OSINT
+ * catalog. URLs are constructed locally and open in new tabs — external
+ * services are never embedded or bypassed.
  */
 'use strict';
 var Rec = window.Rec = window.Rec || {};
@@ -10,6 +12,16 @@ Rec.views = Rec.views || {};
 Rec.views.recon = (() => {
   const { h, esc, el, toast, copyBtn, spinner } = Rec.ui;
   let targetInput = '';
+
+  // Featured one-click lookups, chosen by target type.
+  const FEATURED_DOMAIN = [
+    ['builtwith', 'BuiltWith'], ['shodan-host', 'Shodan'],
+    ['censys-hosts', 'Censys'], ['crtsh', 'crt.sh']
+  ];
+  const FEATURED_IP = [
+    ['shodan-ip', 'Shodan'], ['censys-ip', 'Censys'],
+    ['ipinfo', 'IPinfo'], ['virustotal-ip', 'VirusTotal']
+  ];
 
   async function targetCtx() {
     const src = targetInput.trim() || (Rec.target && Rec.target.host) || '';
@@ -80,6 +92,75 @@ Rec.views.recon = (() => {
     });
   }
 
+  /** Tech stack of the current page (live snapshot via the content sniffer). */
+  function renderTechStack(container) {
+    const card = h('div', { class: 'card', style: 'margin-top:10px' }, [
+      h('h3', {}, 'Tech stack (current page)'),
+      h('div', { id: 'recon-tech-body' })
+    ]);
+    container.appendChild(card);
+    const body = el('recon-tech-body');
+    if (!Rec.target || Rec.target.tabId == null) {
+      body.appendChild(h('div', { class: 'faint' }, 'No current page to analyze — open ReconKit from the page you want to inspect, or use the Website analyzer.'));
+      return;
+    }
+    body.appendChild(spinner('Reading page snapshot…'));
+    browser.runtime.sendMessage({ type: 'rk:sniff', tabId: Rec.target.tabId })
+      .then((snap) => {
+        const b = el('recon-tech-body');
+        if (!b) return;
+        b.replaceChildren();
+        if (!snap || !snap.ok) {
+          b.appendChild(h('div', { class: 'faint' }, esc((snap && (snap.reason || snap.error)) || 'Page not scriptable (restricted page type or not fully loaded).')));
+          b.appendChild(h('div', { class: 'row', style: 'margin-top:8px' }, [
+            h('button', { class: 'btn sm primary', onclick: () => Rec.nav.go('analyzer') }, 'Open Website analyzer'),
+            h('button', { class: 'btn sm', onclick: () => render() }, 'Retry')
+          ]));
+          return;
+        }
+        const tech = snap.tech || [];
+        if (!tech.length) {
+          b.appendChild(h('div', { class: 'faint' }, 'No technology markers detected (heuristic).'));
+        } else {
+          b.appendChild(h('div', { class: 'pill-row' }, tech.map((t) =>
+            h('span', { class: 'tag acc tech-pill', title: esc(t.source) }, esc(t.name)))));
+        }
+        b.appendChild(h('div', { class: 'small faint', style: 'margin-top:6px' }, [
+          esc(snap.rootDomain || snap.hostname || ''),
+          snap.protocol ? ' · ' + esc(snap.protocol) + '://' : '',
+          esc(snap.title || ''),
+          ' · snapshot ' + new Date(snap.sniffedAt).toLocaleTimeString(),
+          snap.fromCache ? ' (cached)' : ' (live)'
+        ]));
+        b.appendChild(h('div', { class: 'row', style: 'margin-top:8px' }, [
+          h('button', { class: 'btn sm primary', onclick: () => Rec.nav.go('analyzer') }, 'Full analysis')
+        ]));
+      })
+      .catch(() => {
+        const b = el('recon-tech-body');
+        if (b) b.replaceChildren();
+      });
+  }
+
+  /** Featured one-click lookups formed from the current target. */
+  function renderQuickLookups(container, ctx) {
+    const featured = ctx.isIp ? FEATURED_IP : FEATURED_DOMAIN;
+    const links = RekServices.linksFor(ctx);
+    const pick = featured
+      .map(([id, name]) => ({ id, name, item: links.find((l) => l.id === id) }))
+      .filter((x) => x.item);
+    if (!pick.length) return;
+    const card = h('div', { class: 'card', style: 'margin-top:10px' }, [
+      h('h3', {}, 'One-click lookups'),
+      h('p', { class: 'small faint', style: 'margin:2px 0 8px' },
+        'Built from ' + esc(ctx.host) + ' — click to open the service in a new tab (their terms & logging policies apply).'),
+      h('div', { style: 'display:flex;flex-wrap:wrap;gap:8px' }, pick.map((x) =>
+        h('button', { class: 'btn sm primary rq-btn', 'data-id': x.id, 'data-url': x.item.url,
+          title: esc(x.item.url), onclick: () => openUrls([x.item.url]) }, esc(x.name))))
+    ]);
+    container.appendChild(card);
+  }
+
   function render() {
     const view = el('view-recon');
     view.replaceChildren();
@@ -105,11 +186,14 @@ Rec.views.recon = (() => {
         ctx.ip ? h('span', { class: 'tag okk' }, 'IP: ' + esc(ctx.ip)) : null
       ]);
       out.appendChild(summary);
+      renderTechStack(out);
       if (!ctx.host) {
         out.appendChild(h('div', { class: 'card faint' }, 'Enter a target or click “Use current tab”.'));
         return;
       }
+      renderQuickLookups(out, ctx);
       const grouped = RekServices.groupedLinks(ctx);
+      out.appendChild(h('div', { class: 'small', style: 'text-transform:uppercase;letter-spacing:.5px;color:var(--text-faint);font-weight:600;margin:14px 0 4px' }, 'More lookups'));
       out.appendChild(renderLinks(grouped));
       if (grouped.order.length === 0) {
         out.appendChild(h('div', { class: 'faint' }, 'No applicable services for this target.'));
@@ -129,5 +213,5 @@ Rec.views.recon = (() => {
     render();
   }
 
-  return { id: 'recon', label: 'OSINT', open };
+  return { id: 'recon', label: 'Recon', open };
 })();

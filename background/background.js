@@ -72,10 +72,15 @@ async function sniff(tabId) {
     if (cached && cached.url === url && Date.now() - cached.sniffedAt < 30000) {
       return Object.assign({}, cached, { fromCache: true });
     }
-    const results = await browser.tabs.executeScript(tId, {
-      code: '(async () => (window.__RK_SNIFFER__ ? await window.__RK_SNIFFER__.run() : null))()'
-    });
-    const snap = results && results[0];
+    // Ask the declared content script (already injected into http/https/file
+    // pages) for a fresh snapshot. MV3: tabs.executeScript was removed, so we
+    // use a message to our own content script instead — needs no host grants.
+    let snap = null;
+    try {
+      snap = await browser.tabs.sendMessage(tId, { type: 'rk:sniff-request' });
+    } catch (err) {
+      return RESTRICTED(tId, url, 'Sniffer unavailable (page blocked, listener conflict, or extension needs reload).');
+    }
     if (!snap || !snap.ok) {
       return RESTRICTED(tId, url, 'Sniffer unavailable (page blocked, listener conflict, or extension needs reload).');
     }

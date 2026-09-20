@@ -10,7 +10,7 @@ lightweight.
 │  ┌──────────────┐  ┌──────────────────────┐  ┌─────────────┐  │
 │  │ action popup                                          │  │
 │  │ app/ (HTML+CSS+JS views)          background/         │  │
-│  │  · Tools / Website / OSINT /      │ event page (MV3)  │  │
+│  │  · Utilities / Website / Recon /  │ event page (MV3)  │  │
 │  │    DNS-IP / Files / Settings      │  · snapshot cache │  │
 │  │  · palette, theme, target chip    │  · RPC (rk:*)     │  │
 │  │                   │               │  · context menus  │  │
@@ -35,7 +35,7 @@ lightweight.
    `app/app.html` (core first). The content script only needs `lib-core.js`,
    `lib/detect.js` and itself.
 2. **services/** — `services.js` is pure catalog data + URL builders
-   (`RekServices`). It is used by the OSINT view, the domain view, and the
+   (`RekServices`). It is used by the Recon view, the domain view, and the
    context menu to construct ready-to-open links for a host/domain/IP.
 3. **content/sniffer.js** — runs at `document_idle` on `http/https/file`
    pages. Collects a *passive* snapshot (URL parts, meta, links, forms,
@@ -43,8 +43,9 @@ lightweight.
    then performs a same-origin `HEAD` (fallback `GET`, body never read) with an
    8 s timeout to sample security-related response headers. It sends the
    snapshot to the background as `rk:auto-snapshot` to warm a cache; the
-   app can also force `rk:sniff` which re-runs the sniffer on demand via
-   `tabs.executeScript`.
+   app can also force `rk:sniff`, and the background re-runs the sniffer on
+   demand by messaging the declared content script (`tabs.sendMessage` with
+   `rk:sniff-request`) — never `tabs.executeScript`, which MV3 removed.
 4. **background/background.js** — event page. Holds a per-tab snapshot cache
    (fresh for 30 s), answers RPC messages, tracks the active tab for the
    popup, handles the `reconkit-open-analyzer` command. Background

@@ -186,5 +186,5 @@ Rec.views.tools = (() => {
     if (el('tool-input')) el('tool-input').value = inputText;
   }
 
-  return { id: 'tools', label: 'Tools', open, setText, selectTool, runTool };
+  return { id: 'tools', label: 'Utilities', open, setText, selectTool, runTool };
 })();

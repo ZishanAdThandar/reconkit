@@ -239,7 +239,9 @@
       },
       performance: {
         elapseMs: Date.now() - t0,
-        navType: performance.getEntriesByType('navigation')[0] ? performance.getEntriesByType('navigation')[0].type : null
+        navType: typeof performance !== 'undefined' && typeof performance.getEntriesByType === 'function'
+          ? (performance.getEntriesByType('navigation')[0] ? performance.getEntriesByType('navigation')[0].type : null)
+          : null
       }
     };
     return snapshot;
@@ -247,6 +249,21 @@
 
   const sniffer = { run };
   window.__RK_SNIFFER__ = sniffer;
+
+  // Answer on-demand sniff requests from the background (popup/analyzer view).
+  // The background targets tabs where this declared content script already
+  // runs, so no tabs.executeScript (removed in MV3) is needed.
+  if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.onMessage) {
+    browser.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+      if (msg && msg.type === 'rk:sniff-request') {
+        run()
+          .then(sendResponse)
+          .catch((e) => sendResponse({ ok: false, error: String(e && e.message || e) }));
+        return true; // keep the channel open for the async response
+      }
+      return undefined;
+    });
+  }
 
   // Auto-warm the background cache when pages load (idempotent, lightweight).
   if (typeof browser !== 'undefined' && browser.runtime) {

@@ -134,7 +134,7 @@ function targetMenu() {
     ['Copy URL', () => Rec.ui.copyText(t.url || '')],
     ['Analyze website', () => Rec.nav.go('analyzer')],
     ['DNS / IP intelligence', () => Rec.nav.go('domain')],
-    ['OSINT lookups', () => Rec.nav.go('recon')]
+    ['Recon lookups', () => Rec.nav.go('recon')]
   ]);
   menu.appendChild(Object.assign(document.createElement('div'), { className: 'tm-sep' }));
   items([['Open in a full tab', () => browser.tabs.create({ url: location.href })]]);

@@ -127,15 +127,20 @@ Rec.tools = (() => {
   $('xor', 'Ciphers', 'XOR',
     'Byte-wise XOR with a key (string or hex). Includes single-byte key brute force.',
     [
+      { key: 'input', label: 'Input format', type: 'select', def: 'auto', options: [
+        yesno('auto', 'Auto-detect'), yesno('text', 'Text'), yesno('hex', 'Hex')] },
       { key: 'key', label: 'Key', type: 'text', def: '' },
       { key: 'keyHex', label: 'Key is hex', type: 'bool', def: false },
       { key: 'output', label: 'Output', type: 'select', def: 'auto', options: [yesno('auto', 'Auto (text if printable)'), yesno('hex', 'Hex only'), yesno('both', 'Both')] }
     ],
     (ctx) => {
       const out = [];
-      const input = ctx.text.trim().match(/^[0-9a-fA-F]+$/i) && !/^\d+$/.test(ctx.text) && (ctx.text.length & 1) === 0
-        ? RekLib.hexToBytes(ctx.text)
-        : RekLib.encodeUTF8(ctx.text);
+      const trimmed = ctx.text.trim();
+      const hexish = /^[0-9a-fA-F]+$/.test(trimmed) && (trimmed.length & 1) === 0 && !/^\d+$/.test(trimmed);
+      let input;
+      if (ctx.opts.input === 'hex') input = RekLib.hexToBytes(ctx.text);
+      else if (ctx.opts.input === 'text') input = RekLib.encodeUTF8(ctx.text);
+      else input = hexish ? RekLib.hexToBytes(ctx.text) : RekLib.encodeUTF8(ctx.text);
       if (ctx.opts.key) {
         const key = ctx.opts.keyHex ? RekLib.hexToBytes(ctx.opts.key) : RekLib.encodeUTF8(ctx.opts.key);
         const res = RekLib.xor.xorBytes(input, key);
@@ -282,6 +287,23 @@ Rec.tools = (() => {
       }
     });
 
+  $('encoding-conv', 'Encoders', 'Encoding converter',
+    'Convert between common encodings in one step: text, binary, octal, decimal, hex, Base32, Base36, Base58, Base62, Base64 and Base64URL.',
+    [
+      { key: 'from', label: 'From', type: 'select', def: 'text', options: RekLib.encodings.PRESETS.map((p) => ({ v: p.v, l: p.l })) },
+      { key: 'to', label: 'To', type: 'select', def: 'hex', options: RekLib.encodings.PRESETS.map((p) => ({ v: p.v, l: p.l })) }
+    ],
+    (ctx) => {
+      try {
+        const text = RekLib.encodings.convert(ctx.text, ctx.opts.from, ctx.opts.to);
+        const name = (v) => (RekLib.encodings.PRESETS.find((p) => p.v === v) || {}).l || v;
+        return { outputs: [{ label: `${name(ctx.opts.from)} → ${name(ctx.opts.to)}`, text, kind: 'mono' }],
+          note: 'Binary/octal/decimal/hex/Base36/Base62 treat input as a big integer; Base32/Base58/Base64 operate on bytes (UTF-8).' };
+      } catch (e) {
+        return { error: String(e.message || e) };
+      }
+    });
+
   $('jwt', 'Encoders', 'JWT decoder & verifier',
     'Decodes header/payload (base64url, local) with readable timestamps; HMAC signature verification with a secret (HS256/384/512).',
     [
@@ -396,6 +418,24 @@ Rec.tools = (() => {
         `Lines: ${s.lines}`,
         `Letters: ${s.letters}  ·  Digits: ${s.digits}  ·  Punctuation: ${s.punctuation}  ·  Whitespace: ${s.whitespace}`
       ].join('\n'), kind: 'mono' }] };
+    });
+
+  $('whitespace', 'Transform', 'Remove / normalize whitespace',
+    'Strip all whitespace, collapse runs to single spaces, trim each line, or just trim the ends.',
+    [{
+      key: 'mode', label: 'Mode', type: 'select', def: 'all', options: [
+        ['all', 'Remove ALL whitespace'], ['collapse', 'Collapse runs → single space'],
+        ['lines', 'Trim each line'], ['trim', 'Trim start / end']
+      ].map(([v, l]) => ({ v, l }))
+    }],
+    (ctx) => {
+      const t = ctx.text;
+      let out;
+      if (ctx.opts.mode === 'all') out = t.replace(/\s+/g, '');
+      else if (ctx.opts.mode === 'collapse') out = t.replace(/[ \t]+/g, ' ').replace(/ *\n */g, '\n').trim();
+      else if (ctx.opts.mode === 'lines') out = t.split('\n').map((l) => l.trim()).join('\n');
+      else out = t.trim();
+      return { outputs: [{ label: 'Result', text: out, kind: 'mono' }] };
     });
 
   /* ------------------------------------------------------------------ *

@@ -67,10 +67,20 @@ Analyzes the active tab (or the URL you right-clicked). The snapshot shows:
   cookies API.
 - **Information not determined** — every area that failed is listed openly.
 
-`Re-scan` forces a fresh snapshot; `DNS / IP` and `OSINT lookups` jump to the
+`Re-scan` forces a fresh snapshot; `DNS / IP` and `Recon lookups` jump to the
 related workspaces seeded with the current target.
 
-## OSINT
+## Recon
+
+The Recon workspace opens with the **tech stack of the current page** when the
+target tab is scriptable (same heuristic markers as the Website analyzer:
+frame-work/static-site markers, libraries, hosting/CDN hints from response
+headers). Below it, **One-click lookups** build four links from the current
+domain — BuiltWith, Shodan, Censys and crt.sh (IP targets get Shodan, Censys,
+IPinfo and VirusTotal instead) — each opening in a new tab.
+
+Enter a URL, hostname, domain or IP (or click *Use current tab*), then *Build
+links* to expand the full catalog:
 
 Enter a URL, hostname, domain or IP (or click *Use current tab*), then *Build
 links*. ReconKit constructs links for the applicable groups:
@@ -132,7 +142,7 @@ stored locally and can be removed anytime.
   “restricted page type” instead of failing silently.
 - Header probing is best-effort: CORS, redirects and server quirks can block
   it — the analyzer tells you when that happened.
-- External services may rate-limit keyless use; the OSINT view is designed for
+- External services may rate-limit keyless use; the Recon view is designed for
   you to paste/copy and run at your own pace.
 - ReconKit is a passive aid: it does not bypass authentication or perform
   active scanning.

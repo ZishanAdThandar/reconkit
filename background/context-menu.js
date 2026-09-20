@@ -52,7 +52,7 @@ async function buildMenus() {
   });
   await browser.contextMenus.create({ id: 'rk-page-analyze', parentId: page, title: 'Analyze current URL', contexts: ['page'] });
   await browser.contextMenus.create({ id: 'rk-page-domain', parentId: page, title: 'Domain / DNS intelligence', contexts: ['page'] });
-  await browser.contextMenus.create({ id: 'rk-page-recon', parentId: page, title: 'Open OSINT lookups', contexts: ['page'] });
+  await browser.contextMenus.create({ id: 'rk-page-recon', parentId: page, title: 'Open Recon lookups', contexts: ['page'] });
   const pageSvcs = await browser.contextMenus.create({
     id: 'rk-page-services', parentId: page, title: 'One-tap lookups', contexts: ['page']
   });
@@ -67,7 +67,7 @@ async function buildMenus() {
     id: 'rk-link', parentId: root, title: 'Link', contexts: ['link']
   });
   await browser.contextMenus.create({ id: 'rk-link-analyze', parentId: link, title: 'Analyze linked URL', contexts: ['link'] });
-  await browser.contextMenus.create({ id: 'rk-link-recon', parentId: link, title: 'OSINT for linked URL', contexts: ['link'] });
+  await browser.contextMenus.create({ id: 'rk-link-recon', parentId: link, title: 'Recon for linked URL', contexts: ['link'] });
 
   // --- Open toolkit ---
   await browser.contextMenus.create({

@@ -164,7 +164,7 @@ Rec.views.analyzer = (() => {
       root.appendChild(card('Page analysis unavailable', h('div', { class: 'error-box' }, esc(why))));
       root.appendChild(card('Actions', h('div', { class: 'row' }, [
         h('button', { class: 'btn sm primary', onclick: () => reload() }, 'Try again'),
-        h('button', { class: 'btn sm', onclick: () => Rec.nav.go('recon') }, 'Open OSINT lookups')
+        h('button', { class: 'btn sm', onclick: () => Rec.nav.go('recon') }, 'Open Recon lookups')
       ])));
       return;
     }
@@ -181,7 +181,7 @@ Rec.views.analyzer = (() => {
         copyBtn(snap.url),
         h('button', { class: 'btn sm' , onclick: () => reload() }, 'Re-scan'),
         h('button', { class: 'btn sm', onclick: () => Rec.nav.go('domain') }, 'DNS / IP'),
-        h('button', { class: 'btn sm primary', onclick: () => Rec.nav.go('recon') }, 'OSINT lookups')
+        h('button', { class: 'btn sm primary', onclick: () => Rec.nav.go('recon') }, 'Recon lookups')
       ])
     ]);
     root.appendChild(header);
@@ -243,7 +243,7 @@ Rec.views.analyzer = (() => {
     ] : [['URL', url], ['Note', 'Not a parseable http(s) URL']];
     root.appendChild(card('Target (no live snapshot)', kvTable(rows)));
     root.appendChild(card('Actions', h('div', { class: 'row' }, [
-      h('button', { class: 'btn sm primary', onclick: () => Rec.nav.go('recon') }, 'Open OSINT lookups'),
+      h('button', { class: 'btn sm primary', onclick: () => Rec.nav.go('recon') }, 'Open Recon lookups'),
       h('button', { class: 'btn sm', onclick: () => Rec.nav.go('domain') }, 'DNS / IP intelligence')
     ])));
   }

@@ -13,7 +13,7 @@ Rec.palette = (() => {
     for (const t of Rec.tools.list) cmds.push({ cat: 'tool', label: 'Tool: ' + t.name, run: () => { Rec.nav.go('tools'); Rec.views.tools.selectTool(t.id); } });
     cmds.push(
       { cat: 'action', label: 'Analyze current website', run: () => Rec.nav.go('analyzer') },
-      { cat: 'action', label: 'OSINT lookups for current target', run: () => Rec.nav.go('recon') },
+      { cat: 'action', label: 'Recon lookups for current target', run: () => Rec.nav.go('recon') },
       { cat: 'action', label: 'DNS / IP intelligence', run: () => Rec.nav.go('domain') },
       { cat: 'action', label: 'Analyze a local file', run: () => Rec.nav.go('files') },
       { cat: 'action', label: 'Toggle dark / light mode', run: () => Rec.theme.toggle() },
