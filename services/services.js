@@ -1,6 +1,6 @@
 /**
  * ReconKit — External OSINT service catalog.
- * Pure data + URL builders. Works in background, sidebar and Node (tests).
+ * Pure data + URL builders. Works in background, popup and Node (tests).
  * Every entry documents what it queries and whether it accepts host / domain /
  * URL / IP targets. All URLs open externally in a new tab.
  */

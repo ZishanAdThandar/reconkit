@@ -52,17 +52,21 @@
       "all_frames": false
     }
   ],
-  "sidebar_action": {
-    "default_panel": "app/app.html",
+  "action": {
+    "default_popup": "app/app.html",
     "default_title": "ReconKit",
-    "default_icon": "icons/icon-48.png"
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png"
+    }
   },
   "commands": {
-    "_execute_sidebar_action": {
+    "_execute_action": {
       "suggested_key": {
         "default": "Alt+Shift+R"
       },
-      "description": "Toggle the ReconKit sidebar"
+      "description": "Open the ReconKit popup"
     },
     "reconkit-open-analyzer": {
       "suggested_key": {

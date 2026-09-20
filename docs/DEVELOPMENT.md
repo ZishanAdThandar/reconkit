@@ -26,7 +26,7 @@ about:debugging → This Firefox → Load Temporary Add-on
 → dist/reconkit-1.0.0.zip   (or manifest.json for source)
 ```
 
-The toolbar button toggles the sidebar (`Alt+Shift+R`). `Alt+Shift+A` opens the
+The toolbar button opens the popup (`Alt+Shift+R`). `Alt+Shift+A` opens the
 analyzer in a tab. The extension ID `reconkit@zishanhack.com` is pinned in
 `manifest.json` and enforced by the build.
 
@@ -61,8 +61,8 @@ known-output fixtures, round trips, error cases).
 Event pages in MV3 wake on demand. `console.info('[ReconKit] background ready
 v<version>')` appears once the background runs; message traffic (`rk:sniff` etc.)
 can be traced by opening the extension’s internal console via
-`about:debugging`. The sidebar app logs normally in its own devtools panel
-(right-click inside the sidebar → Inspect).
+`about:debugging`. The popup app logs normally in its own devtools panel
+(right-click inside the popup → Inspect).
 
 ## Packaging checklist
 
@@ -70,5 +70,5 @@ can be traced by opening the extension’s internal console via
 2. `npm run lint` clean (only notes, no errors)
 3. `npm run icons` if the brand changed
 4. `npm run build` produces `dist/reconkit-<version>.zip`
-5. Fresh-profile smoke test: sidebar toggle, analyze a page, one OSINT link,
-   DNS lookup, a file analysis, theme toggle, context menu actions
+5. Fresh-profile smoke test: popup opens & theme renders, analyze a page, one
+   OSINT link, DNS lookup, a file analysis, theme toggle, context menu actions

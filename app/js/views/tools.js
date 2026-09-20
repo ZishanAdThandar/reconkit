@@ -30,7 +30,7 @@ Rec.views.tools = (() => {
             onclick: () => selectTool(t.id)
           }, t.name))));
     }).filter(Boolean);
-    const box = el('tools-sidebar');
+    const box = el('tools-list');
     box.replaceChildren();
     box.append(...cats);
   }
@@ -165,7 +165,7 @@ Rec.views.tools = (() => {
     const view = el('view-tools');
     view.replaceChildren();
     view.appendChild(h('div', { class: 'tools-layout' }, [
-      h('div', { class: 'tools-cats', id: 'tools-sidebar' }),
+      h('div', { class: 'tools-cats', id: 'tools-list' }),
       h('div', { id: 'tools-workspace' })
     ]));
     restore().then(() => {

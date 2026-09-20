@@ -39,7 +39,7 @@ if (gecko.id !== 'reconkit@zishanhack.com') {
   console.error('Extension ID must be reconkit@zishanhack.com.');
   process.exit(1);
 }
-const required = ['manifest_version', 'name', 'version', 'permissions', 'background', 'sidebar_action'];
+const required = ['manifest_version', 'name', 'version', 'permissions', 'background', 'action'];
 for (const key of required) {
   if (manifest[key] === undefined) { console.error(`manifest missing "${key}"`); process.exit(1); }
 }
@@ -49,6 +49,10 @@ const unexpectedPerms = new Set([
 const violations = (manifest.permissions || []).filter((p) => unexpectedPerms.has(p));
 if (violations.length) {
   console.error('Unexpected (over-reaching) permissions requested:', violations.join(', '));
+  process.exit(1);
+}
+if (manifest.sidebar_action) {
+  console.error('ReconKit uses an action popup; remove "sidebar_action".');
   process.exit(1);
 }
 

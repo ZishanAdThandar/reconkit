@@ -8,13 +8,13 @@ lightweight.
 ┌───────────────────────────────────────────────────────────────┐
 │  Firefox                                                      │
 │  ┌──────────────┐  ┌──────────────────────┐  ┌─────────────┐  │
-│  │ sidebar_action                                           │  │
-│  │ app/ (HTML+CSS+JS views)          background/            │  │
-│  │  · Tools / Website / OSINT /      │ event page (MV3)     │  │
-│  │    DNS-IP / Files / Settings      │  · snapshot cache    │  │
-│  │  · palette, theme, target chip    │  · RPC (rk:*)        │  │
-│  │                   │               │  · context menus     │  │
-│  └───────────────────┼───────────────┴──────────────────────┘  │
+│  │ action popup                                          │  │
+│  │ app/ (HTML+CSS+JS views)          background/         │  │
+│  │  · Tools / Website / OSINT /      │ event page (MV3)  │  │
+│  │    DNS-IP / Files / Settings      │  · snapshot cache │  │
+│  │  · palette, theme, target chip    │  · RPC (rk:*)     │  │
+│  │                   │               │  · context menus  │  │
+│  └───────────────────┼───────────────┴───────────────────┘  │
 │                      │ runtime.sendMessage                      │
 │  ┌───────────────────▼──────────────────────────────────────┐  │
 │  │ content/sniffer.js  (declared content script)            │  │
@@ -43,25 +43,26 @@ lightweight.
    then performs a same-origin `HEAD` (fallback `GET`, body never read) with an
    8 s timeout to sample security-related response headers. It sends the
    snapshot to the background as `rk:auto-snapshot` to warm a cache; the
-   sidebar can also force `rk:sniff` which re-runs the sniffer on demand via
+   app can also force `rk:sniff` which re-runs the sniffer on demand via
    `tabs.executeScript`.
 4. **background/background.js** — event page. Holds a per-tab snapshot cache
    (fresh for 30 s), answers RPC messages, tracks the active tab for the
-   sidebar, handles the `reconkit-open-analyzer` command. Background
+   popup, handles the `reconkit-open-analyzer` command. Background
    scripts are plain `browser.*` code (MV3 event page).
 5. **background/context-menu.js** — builds the right-click tree
    (selection/page/link/search submenus), hands off context to the app through
    `storage.session` (`rk:payload`) plus a deep link (`app/app.html#/view`).
 6. **app/** — the UI. `app.html` loads lib → services → `js/ui.js`,
    `js/tools-registry.js`, views, palette, boot. The same document is used for
-   the sidebar and a full tab (`btn-open-tab` / context menu) — `boot.js`
-   detects the context and adds a `body.full` class for a wider layout.
+   the action popup and a full tab (`btn-open-tab` / context menu) — `boot.js`
+   detects the context and adds a `body.compact` (popup) or `body.full`
+   (tab) class for the right layout.
 
 ## Data flow & state
 
 - **Target**: the background answers `rk:get-target` with the active tab’s
   URL/host/root-domain (via `lib-core.rootDomain`, a compact public-suffix
-  heuristic). The sidebar shows it in the target chip; views use it to seed
+  heuristic). The app shows it in the target chip; views use it to seed
   their inputs. Tab lifecycle events purge the snapshot cache.
 - **Snapshots**: cached in-memory (`background/background.js`, `Map<tabId,
   snapshot>`), never written to disk. “Restricted page” and “not determined”
@@ -95,7 +96,9 @@ Host permissions cover only the three direct-fetch APIs: `crt.sh`,
 
 - Extension ID: `reconkit@zishanhack.com` — set via
   `browser_specific_settings.gecko.id` and enforced by `tools/build.mjs`.
-- Firefox 115+ (works with MV3 event pages and `sidebar_action`).
+- Firefox 115+ (MV3 event pages; the `action` popup works from 109+, and the
+  `_execute_action` shortcut from 127+ — on older versions the toolbar button
+  still opens the popup).
 - No bundler: script order in `app.html` and the manifest defines the contract.
 - Node ≥ 18 (`node:test`) runs the same lib files — the test vector set in
   `test/run-tests.mjs` is the authoritative behavior spec.

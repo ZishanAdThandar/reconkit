@@ -24,7 +24,7 @@ telemetry.
 | **OSINT** | One-click lookups for a host/domain/IP across 40+ free public services (search engines, code search, certificate transparency, archives, passive DNS, domain/IP intelligence, security assessment) — built locally, opened in new tabs |
 | **DNS / IP** | Live DNS records (A/AAAA/CNAME/MX/NS/TXT via DoH), certificate transparency & subdomain harvesting (crt.sh), ASN/network metadata (ipinfo.io) |
 | **Files** | 100 % local file analysis: magic-byte type detection, SHA-256 & MD5, Shannon entropy, detectable strings, image dimensions, PNG text chunks, JPEG EXIF (incl. GPS). External file tools are **gated behind explicit consent** |
-| **Integration** | Right-click menus (analyze/decode/hash selection, page & link actions, one-tap lookups), keyboard shortcuts (Alt+Shift+R sidebar, Alt+Shift+A analyzer, Ctrl+K palette), dark/light theme toggle, command palette |
+| **Integration** | Right-click menus (analyze/decode/hash selection, page & link actions, one-tap lookups), keyboard shortcuts (Alt+Shift+R popup, Alt+Shift+A analyzer, Ctrl+K palette), dark/light theme toggle, command palette |
 
 The extension ID is `reconkit@zishanhack.com`. Firefox 115+, Manifest V3.
 
@@ -43,7 +43,7 @@ npm run icons        # regenerate icons/icon-*.png
 ```
 1. about:debugging → This Firefox → Load Temporary Add-on
 2. select dist/reconkit-1.0.0.zip  (or manifest.json for a dev run)
-3. toolbar button toggles the ReconKit sidebar (Alt+Shift+R)
+3. toolbar button opens the ReconKit popup (Alt+Shift+R)
 ```
 
 Or during development: `npm start` (web-ext run).
@@ -79,7 +79,7 @@ background/            event page + context menus
 content/               passive page snapshotter (content script)
 lib/                   environment-agnostic tool layer (pure JS, shared with tests)
 services/              external OSINT service catalog (URL builders)
-app/                   sidebar application (HTML + CSS + vanilla JS views)
+app/                   action popup / full-tab application (HTML + CSS + vanilla JS views)
 icons/                 generated PNG icons
 tools/                 icon generator + build script
 test/                  Node test suite for lib/

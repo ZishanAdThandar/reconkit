@@ -3,7 +3,7 @@
  * Responsibilities:
  *  - on-demand page snapshots (cached per tab, fresh for 30 s)
  *  - passive snapshot cache fed by declared content scripts
- *  - RPC helpers used by the sidebar UI
+ *  - RPC helpers used by the popup UI
  *  - keyboard shortcuts
  */
 'use strict';
@@ -168,7 +168,7 @@ browser.commands.onCommand.addListener(async (command) => {
 
 (async function init() {
   await ensureDefaults();
-  // Give the sidebar a few seconds of snapshot warm-up budget; mainly relies
+  // Give the popup a few seconds of snapshot warm-up budget; mainly relies
   // on declared content scripts + on-demand sniffing.
   console.info('[ReconKit] background ready v' + (browser.runtime.getManifest().version));
 })();

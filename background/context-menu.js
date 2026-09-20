@@ -1,7 +1,7 @@
 /**
  * ReconKit — Right-click (context menu) integration.
  * Menu tree is rebuilt on install/update/startup. Actions dispatch to the
- * sidebar application (opened as a tab when needed) or open services directly.
+ * popup application (opened as a tab when needed) or open services directly.
  */
 'use strict';
 

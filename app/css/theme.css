@@ -9,7 +9,61 @@
   --mono: "SFMono-Regular", ui-monospace, "Cascadia Code", "Fira Code", "Liberation Mono", Menlo, Consolas, monospace;
   --space: 10px;
   --transition: 120ms ease;
-  color-scheme: light dark;
+  /* Light default — tokens must exist even before JS sets data-theme,
+     otherwise the panel renders with the browser’s default colors
+     (near-invisible on dark system themes). Overridden below. */
+  color-scheme: light;
+  --bg-0: #f2efe5;
+  --bg-1: #faf8f1;
+  --bg-2: #edeadd;
+  --bg-3: #e4e0d0;
+  --bg-inset: #f7f4ea;
+  --line: rgba(72, 62, 40, 0.15);
+  --line-strong: rgba(72, 62, 40, 0.28);
+  --text: #2d2819;
+  --text-dim: #5f523d;
+  --text-faint: #76694f;
+  --accent: #8a5a22;
+  --accent-ink: #fdfaf3;
+  --accent-soft: rgba(138, 90, 34, 0.11);
+  --ok: #4d7c42;
+  --warn: #9a7a1e;
+  --bad: #a34838;
+  --info: #3d6b82;
+  --ok-soft: rgba(77, 124, 66, 0.12);
+  --warn-soft: rgba(154, 122, 30, 0.12);
+  --bad-soft: rgba(163, 72, 56, 0.12);
+  --info-soft: rgba(61, 107, 130, 0.12);
+  --shadow: 0 8px 24px rgba(70, 60, 40, 0.14);
+}
+
+/* Match the OS preference before JS runs (data-theme="auto" state). */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg-0: #151310;
+    --bg-1: #1b1814;
+    --bg-2: #211e18;
+    --bg-3: #292520;
+    --bg-inset: #100e0b;
+    --line: rgba(226, 207, 178, 0.11);
+    --line-strong: rgba(226, 207, 178, 0.22);
+    --text: #ecdfc8;
+    --text-dim: #b3a181;
+    --text-faint: #8d7f66;
+    --accent: #d9a05b;
+    --accent-ink: #241b0e;
+    --accent-soft: rgba(217, 160, 91, 0.14);
+    --ok: #9cbf8e;
+    --warn: #ddc16e;
+    --bad: #dd9387;
+    --info: #90b9ca;
+    --ok-soft: rgba(156, 191, 142, 0.14);
+    --warn-soft: rgba(221, 193, 110, 0.14);
+    --bad-soft: rgba(221, 147, 135, 0.14);
+    --info-soft: rgba(144, 185, 202, 0.14);
+    --shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  }
 }
 
 html[data-theme="dark"] {
@@ -20,9 +74,9 @@ html[data-theme="dark"] {
   --bg-inset: #100e0b;
   --line: rgba(226, 207, 178, 0.11);
   --line-strong: rgba(226, 207, 178, 0.22);
-  --text: #e5dac5;
-  --text-dim: #a2957c;
-  --text-faint: #6f6553;
+  --text: #ecdfc8;
+  --text-dim: #b3a181;
+  --text-faint: #8d7f66;
   --accent: #d9a05b;
   --accent-ink: #241b0e;
   --accent-soft: rgba(217, 160, 91, 0.14);
@@ -46,9 +100,9 @@ html[data-theme="light"] {
   --bg-inset: #f7f4ea;
   --line: rgba(72, 62, 40, 0.15);
   --line-strong: rgba(72, 62, 40, 0.28);
-  --text: #322c1e;
-  --text-dim: #6b6150;
-  --text-faint: #968b75;
+  --text: #2d2819;
+  --text-dim: #5f523d;
+  --text-faint: #76694f;
   --accent: #8a5a22;
   --accent-ink: #fdfaf3;
   --accent-soft: rgba(138, 90, 34, 0.11);

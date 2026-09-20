@@ -114,7 +114,7 @@ Rec.views.settings = (() => {
         ['Name', m.name], ['Version', m.version],
         ['Extension ID', browser.runtime.id],
         ['Manifest', 'WebExtension (Manifest V ' + m.manifest_version + ')'],
-        ['Mode', Rec.inSidebar ? 'sidebar' : 'full tab'],
+        ['Mode', Rec.compact ? 'popup' : 'full tab'],
         ['Author', m.author || '—'],
         ['License', 'MIT']
       ]),

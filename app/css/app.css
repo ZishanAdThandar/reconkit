@@ -48,6 +48,14 @@ html, body { overflow: hidden; }
 .icon-btn:hover { background: var(--bg-3); color: var(--text); }
 .icon-btn svg { width: 16px; height: 16px; }
 
+/* Theme toggle — always readable as a control, tinted with the accent. */
+#btn-theme {
+  color: var(--accent);
+  background: var(--bg-2);
+  border-color: var(--line);
+}
+#btn-theme:hover { background: var(--bg-3); color: var(--accent); border-color: var(--line-strong); }
+
 /* ---------- Nav ---------- */
 .nav {
   display: flex; gap: 2px; padding: 6px 8px 0;
@@ -248,5 +256,19 @@ a.link:hover { text-decoration: underline; }
 
 kbd { font-family: var(--mono); font-size: 11px; background: var(--bg-2); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px; }
 
-/* Full-tab (non-sidebar) view */
+/* Full-tab (wide) view */
 body.full #app.shell { max-width: 1080px; margin: 0 auto; }
+
+/* Action popup — Firefox sizes the popup to the document (max 800×600), so the
+   compact dimensions come straight from CSS. Full tabs are ≥700px viewport wide
+   and opt back into auto layout via the media query below (this also means the
+   popup is compact even before boot.js runs). */
+body { width: 400px; height: 560px; }
+@media (min-width: 700px) {
+  body { width: auto; height: auto; }
+}
+@media (max-width: 699px) {
+  .tools-layout { grid-template-columns: 1fr; }
+  .tools-cats { position: static; max-height: 40vh; overflow-y: auto; }
+  .grid-2 { grid-template-columns: 1fr; }
+}

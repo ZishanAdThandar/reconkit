@@ -26,7 +26,7 @@ access**:
 
 - No telemetry, analytics, counters, or beaconing.
 - No browsing history is stored or read beyond the *active tab* you are
-  analyzing, and only when you ask (target chip → views, sidebar actions,
+  analyzing, and only when you ask (target chip → views, popup actions,
   context-menu actions).
 - Page snapshots live in an in-memory cache (30 s freshness) inside the
   extension background process and are cleared on tab close/navigation. They

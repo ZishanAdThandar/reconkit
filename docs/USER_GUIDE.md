@@ -1,8 +1,10 @@
 # User Guide
 
-ReconKit lives in a Firefox **sidebar** (the small panel on the left). The
-toolbar button toggles it (`Alt+Shift+R`). Six workspaces are available; the
-command palette (`Ctrl+K`, or the search button) reaches anything quickly.
+ReconKit lives in a Firefox **action popup** — a compact panel that opens from
+the toolbar button (`Alt+Shift+R`) and closes when you click elsewhere. Use
+**Open in a full tab** (or `Alt+Shift+A` for the analyzer) when you want a
+roomy tab-sized workspace. Six workspaces are available; the command palette
+(`Ctrl+K`, or the search button) reaches anything quickly.
 
 The footer always shows the current status, plus the author’s pages (about ·
 links), and the footer links open externally — ReconKit never loads them inside
@@ -118,7 +120,7 @@ stored locally and can be removed anytime.
 
 | Shortcut | Action |
 | --- | --- |
-| `Alt+Shift+R` | toggle the sidebar |
+| `Alt+Shift+R` | open the popup |
 | `Alt+Shift+A` | analyze the current website (opens the panel in a tab) |
 | `Ctrl/Cmd+K` | command palette |
 | `Ctrl+Enter` | run the active tool |

@@ -174,9 +174,9 @@ function statusFor(host) {
 }
 
 async function init() {
-  // Detect context: sidebar vs full tab (tabs are wide).
-  Rec.inSidebar = window.innerWidth < 700;
-  if (!Rec.inSidebar) document.body.classList.add('full');
+  // Detect context for the Settings label: action popup (narrow) vs full tab (wide).
+  Rec.compact = window.innerWidth < 700;
+  document.body.classList.add('full');
   document.getElementById('version-label').textContent = 'v' + browser.runtime.getManifest().version;
 
   Rec.theme.init();
