@@ -11,7 +11,7 @@
 const RK = {
   cache: new Map(),           // tabId -> snapshot
   defaults: {
-    theme: 'auto',
+    theme: 'dark',
     consent: { externalFileServices: false },
     recentTargets: []
   }
@@ -111,6 +111,21 @@ async function openTabs(urls) {
 }
 
 /* ------------------------------------------------------------------ *
+ * Dark reader (per-tab, persisted in session storage)
+ * ------------------------------------------------------------------ */
+async function darkGet(tabId) {
+  try {
+    const o = await browser.storage.session.get('rk:dark:' + tabId);
+    return !!(o && o['rk:dark:' + tabId]);
+  } catch (e) { return false; }
+}
+async function darkSet(tabId, value) {
+  try {
+    await browser.storage.session.set({ ['rk:dark:' + tabId]: !!value });
+  } catch (e) { /* session storage unavailable */ }
+}
+
+/* ------------------------------------------------------------------ *
  * Messaging
  * ------------------------------------------------------------------ */
 browser.runtime.onMessage.addListener((msg, sender) => {
@@ -136,6 +151,20 @@ browser.runtime.onMessage.addListener((msg, sender) => {
     }
     case 'rk:open-tabs': {
       return openTabs(msg.urls || []).catch((e) => ({ opened: 0, error: String(e) }));
+    }
+    case 'rk:dark-toggle': {
+      const dTab = msg.tabId;
+      if (dTab == null) return Promise.resolve({ ok: false, reason: 'No tab.' });
+      return browser.tabs.sendMessage(dTab, { type: 'rk:dark-toggle' })
+        .then(async (r) => {
+          if (!r || !r.ok) return { ok: false, reason: 'Page not scriptable for dark reader.' };
+          await darkSet(dTab, !!r.dark);
+          return { ok: true, dark: !!r.dark, tabId: dTab };
+        })
+        .catch(() => Promise.resolve({ ok: false, reason: 'Page not scriptable for dark reader.' }));
+    }
+    case 'rk:dark-get': {
+      return darkGet(msg.tabId).then((dark) => ({ ok: true, dark, tabId: msg.tabId }));
     }
     case 'rk:clear-cache': {
       RK.cache.clear();

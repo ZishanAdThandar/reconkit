@@ -39,22 +39,16 @@ Rec.views.settings = (() => {
     return card;
   }
 
-  async function themeControls() {
-    const settings = await Rec.settings.get();
-    const cur = settings.theme || 'auto';
-    const seg = h('div', { class: 'row' });
-    for (const [v, l, d] of [['auto', 'System', 'follow the OS setting'], ['dark', 'Dark (calm)', 'warm, low blue light'], ['light', 'Light (paper)', 'soft, low glare']]) {
-      seg.appendChild(h('button', {
-        class: 'btn sm' + (cur === v ? ' primary' : ''),
-        onclick: async () => {
-          await Rec.settings.set({ theme: v });
-          Rec.theme.apply();
-          render();
-        }
-      }, l + (cur === v ? ' ✓' : '')));
-      seg.appendChild(h('span', { class: 'small faint' }, d));
-    }
-    return seg;
+  function appearanceCard() {
+    return h('div', { class: 'card' }, [
+      h('h3', {}, 'Appearance'),
+      h('div', { class: 'small muted', style: 'margin-bottom:8px' }, 'ReconKit is dark-only — the toolbar moon button instead darkens (or restores) the content of the current web page, per tab, whenever you want it.'),
+      h('div', { class: 'row' }, [
+        h('span', { class: 'tag acc' }, 'Dark only'),
+      ]),
+      h('div', { class: 'small faint', style: 'margin-top:8px' },
+        'The dark reader inverts the page’s content locally — nothing is sent anywhere, and a second click restores the page to normal.')
+    ]);
   }
 
   function privacyCard() {
@@ -128,8 +122,7 @@ Rec.views.settings = (() => {
   function render() {
     const view = el('view-settings');
     view.replaceChildren();
-    view.appendChild(h('div', { class: 'card' }, [h('h3', {}, 'Appearance'), h('div', { class: 'small muted', style: 'margin-bottom:8px' }, 'Calm dark mode reduces blue-light exposure and uses low-luminance warm surfaces; light mode is soft paper — both tuned to avoid harsh whites.'),
-      h('div', { class: 'row' }, [themeControls()]), h('div', { class: 'small faint', style: 'margin-top:8px' }, 'The toolbar toggle flips dark/light instantly and persists your choice.')]));
+    view.appendChild(appearanceCard());
     view.appendChild(h('div', { class: 'card' }, [h('h3', {}, 'Optional permissions (opt-in)'),
       h('div', { class: 'small muted', style: 'margin-bottom:8px' }, 'ReconKit works fully without these. Enable them for deeper passive analysis; everything stays local.')]));
     view.appendChild(permCard('cookies', 'Enhanced cookie analysis',

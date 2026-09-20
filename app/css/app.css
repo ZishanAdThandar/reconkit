@@ -48,13 +48,15 @@ html, body { overflow: hidden; }
 .icon-btn:hover { background: var(--bg-3); color: var(--text); }
 .icon-btn svg { width: 16px; height: 16px; }
 
-/* Theme toggle — always readable as a control, tinted with the accent. */
-#btn-theme {
+/* Dark reader button — moon icon; lit up (accent) while the page is darkened. */
+#btn-darkpage {
+  color: var(--text-dim);
+}
+#btn-darkpage[data-on] {
   color: var(--accent);
   background: var(--bg-2);
-  border-color: var(--line);
+  border-color: var(--line-strong);
 }
-#btn-theme:hover { background: var(--bg-3); color: var(--accent); border-color: var(--line-strong); }
 
 /* ---------- Nav ---------- */
 .nav {

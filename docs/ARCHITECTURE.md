@@ -12,7 +12,7 @@ lightweight.
 │  │ app/ (HTML+CSS+JS views)          background/         │  │
 │  │  · Utilities / Website / Recon /  │ event page (MV3)  │  │
 │  │    DNS-IP / Files / Settings      │  · snapshot cache │  │
-│  │  · palette, theme, target chip    │  · RPC (rk:*)     │  │
+│  │  · dark reader · target chip      │  · RPC (rk:*)     │  │
 │  │                   │               │  · context menus  │  │
 │  └───────────────────┼───────────────┴───────────────────┘  │
 │                      │ runtime.sendMessage                      │
@@ -68,11 +68,11 @@ lightweight.
 - **Snapshots**: cached in-memory (`background/background.js`, `Map<tabId,
   snapshot>`), never written to disk. “Restricted page” and “not determined”
   states are first-class results, not silent failures.
-- **Settings**: `storage.local.settings` — theme (`auto|dark|light`) and file
-  consent flag. Everything else (payloads, resolved-IP hints) lives in
-  `storage.session` and is cleaned up.
+- **Settings**: `storage.local.settings` — dark-only theme and the file
+  analysis consent flag. Everything else (payloads, resolved-IP hints, per-tab
+  dark reader state) lives in `storage.session` and is cleaned up.
 - **Messages** (`rk:*`): `rk:sniff`, `rk:auto-snapshot`, `rk:get-target`,
-  `rk:open-tabs`, `rk:clear-cache`, `rk:stats`.
+  `rk:open-tabs`, `rk:dark-toggle`, `rk:dark-get`, `rk:clear-cache`, `rk:stats`.
 
 ## Permissions (why each one exists)
 

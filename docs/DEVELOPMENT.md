@@ -70,5 +70,6 @@ can be traced by opening the extension’s internal console via
 2. `npm run lint` clean (only notes, no errors)
 3. `npm run icons` if the brand changed
 4. `npm run build` produces `dist/reconkit-<version>.zip`
-5. Fresh-profile smoke test: popup opens & theme renders, analyze a page, one
-   Recon lookup, DNS lookup, a file analysis, theme toggle, context menu actions
+5. Fresh-profile smoke test: popup opens dark & renders, analyze a page, one
+   Recon lookup, DNS lookup, a file analysis, dark reader toggle on a page,
+   context menu actions

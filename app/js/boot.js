@@ -6,7 +6,7 @@
 var Rec = window.Rec = window.Rec || {};
 
 Rec.settings = (() => {
-  const defaults = { theme: 'auto', consent: { externalFileServices: false } };
+  const defaults = { theme: 'dark', consent: { externalFileServices: false } };
   let cache = null;
   async function get() {
     if (cache) return cache;
@@ -27,38 +27,68 @@ Rec.settings = (() => {
 })();
 
 Rec.theme = (() => {
-  function resolve(theme) {
-    if (theme === 'dark' || theme === 'light') return theme;
-    if (typeof matchMedia !== 'undefined' && matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
-    return 'light';
-  }
+  // ReconKit is dark-only. No light mode, no system-follow: keeps the chrome
+  // consistent with the dark page-darkening reader everywhere.
+  function resolve() { return 'dark'; }
   async function apply() {
-    const s = await Rec.settings.get();
-    const mode = resolve(s.theme);
-    document.documentElement.setAttribute('data-theme', mode);
-    const btn = document.getElementById('btn-theme');
-    if (btn) {
-      btn.title = mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-      btn.innerHTML = mode === 'dark'
-        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
-        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8Z"/></svg>';
-    }
-    return mode;
+    document.documentElement.setAttribute('data-theme', 'dark');
+    return 'dark';
   }
+  function init() { return apply(); }
+  return { apply, resolve, init };
+})();
+
+Rec.darkPage = (() => {
+  // Dark reader: inverts the CONTENT of the current web page (per tab, opt-in).
+  // The background forwards a toggle to the declared content script.
+  let on = false;
+
+  function paint() {
+    const b = document.getElementById('btn-darkpage');
+    if (!b) return;
+    if (on) b.dataset.on = '1'; else delete b.dataset.on;
+    b.title = on ? 'Dark reader: restore page to normal' : 'Dark reader: darken this page content';
+  }
+
+  async function refresh() {
+    on = false;
+    const t = Rec.target;
+    if (t && t.tabId != null) {
+      try {
+        const r = await browser.runtime.sendMessage({ type: 'rk:dark-get', tabId: t.tabId });
+        if (r && r.ok && r.dark) on = true;
+      } catch (e) { /* background sleeping */ }
+    }
+    paint();
+  }
+
   async function toggle() {
-    const s = await Rec.settings.get();
-    const currentMode = await apply();
-    await Rec.settings.set({ theme: currentMode === 'dark' ? 'light' : 'dark' });
-    await apply();
-  }
-  function init() {
-    apply();
-    if (typeof matchMedia !== 'undefined') {
-      matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => apply());
+    const t = Rec.target;
+    if (!t || t.tabId == null) {
+      Rec.ui.toast('Open ReconKit from a web page to use the dark reader.');
+      return;
     }
-    document.getElementById('btn-theme').addEventListener('click', toggle);
+    try {
+      const r = await browser.runtime.sendMessage({ type: 'rk:dark-toggle', tabId: t.tabId });
+      if (!r || !r.ok) {
+        Rec.ui.toast((r && r.reason) || 'This page cannot be darkened.');
+        return;
+      }
+      on = !!r.dark;
+    } catch (e) {
+      Rec.ui.toast('This page cannot be darkened.');
+      return;
+    }
+    paint();
+    Rec.ui.toast(on ? 'Dark reader on — content darkened' : 'Dark reader off — content restored');
   }
-  return { apply, toggle, init, resolve };
+
+  function init() {
+    paint();
+    document.getElementById('btn-darkpage').addEventListener('click', toggle);
+  }
+
+  return { init, refresh, toggle, isOn: () => on };
 })();
 
 Rec.nav = (() => {
@@ -182,6 +212,7 @@ async function init() {
   Rec.theme.init();
   Rec.nav.init();
   Rec.palette.init();
+  Rec.darkPage.init();
 
   document.getElementById('target-chip').addEventListener('click', (e) => {
     e.stopPropagation();
@@ -195,9 +226,14 @@ async function init() {
   // Track target
   await Rec.target.refresh();
   statusFor(Rec.target.host);
-  browser.tabs.onActivated.addListener(() => { Rec.target.refresh(); statusFor(Rec.target.host); });
+  await Rec.darkPage.refresh();
+  browser.tabs.onActivated.addListener(() => {
+    Rec.target.refresh().then(() => { statusFor(Rec.target.host); return Rec.darkPage.refresh(); });
+  });
   browser.tabs.onUpdated.addListener((_id, info) => {
-    if (info.url || info.title) Rec.target.refresh();
+    if (info.url || info.title) {
+      Rec.target.refresh().then(() => Rec.darkPage.refresh());
+    }
   });
 
   // Route to initial view (hash decides; payload may override)

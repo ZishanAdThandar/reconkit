@@ -23,8 +23,19 @@ Rec.views.recon = (() => {
     ['ipinfo', 'IPinfo'], ['virustotal-ip', 'VirusTotal']
   ];
 
+  function hostOf(url) {
+    if (!url) return '';
+    try { return new URL(url).hostname.toLowerCase(); } catch (e) { return ''; }
+  }
+
+  function targetHost() {
+    const t = Rec.target || {};
+    if (t.host) return t.host;
+    return hostOf(t.url);
+  }
+
   async function targetCtx() {
-    const src = targetInput.trim() || (Rec.target && Rec.target.host) || '';
+    const src = targetInput.trim() || targetHost();
     let ip = null;
     if (src && !/^\d{1,3}(\.\d{1,3}){3}$/.test(src) && !src.includes(':')) {
       // Attempt cached resolution via background (dns.google A record)
@@ -45,7 +56,7 @@ Rec.views.recon = (() => {
     const ctx = RekServices.buildContext(src || Rec.target.url, { ip: ip || undefined });
     // fill in from target when empty
     if (!targetInput.trim() && Rec.target && !ctx.host) {
-      return RekServices.buildContext(Rec.target.url || Rec.target.host, { ip: ip || undefined });
+      return RekServices.buildContext(Rec.target.url || targetHost(), { ip: ip || undefined });
     }
     return ctx;
   }
@@ -94,14 +105,16 @@ Rec.views.recon = (() => {
 
   /** Tech stack of the current page (live snapshot via the content sniffer). */
   function renderTechStack(container) {
+    const host = targetHost();
+    const title = host ? `Tech stack (${host})` : 'Tech stack (current page)';
     const card = h('div', { class: 'card', style: 'margin-top:10px' }, [
-      h('h3', {}, 'Tech stack (current page)'),
+      h('h3', {}, title),
       h('div', { id: 'recon-tech-body' })
     ]);
     container.appendChild(card);
     const body = el('recon-tech-body');
     if (!Rec.target || Rec.target.tabId == null) {
-      body.appendChild(h('div', { class: 'faint' }, 'No current page to analyze — open ReconKit from the page you want to inspect, or use the Website analyzer.'));
+      body.appendChild(h('div', { class: 'faint' }, 'No live page to read yet — enter a target or click “Use current page” above, then request a snapshot.'));
       return;
     }
     body.appendChild(spinner('Reading page snapshot…'));
@@ -168,7 +181,7 @@ Rec.views.recon = (() => {
       h('h3', {}, 'Target'),
       h('div', { class: 'row', style: 'margin-bottom:8px' }, [
         h('input', { id: 'recon-target', type: 'text', placeholder: 'domain, hostname, URL or IP', value: targetInput, style: 'flex:1', oninput: (e) => { targetInput = e.target.value; } }),
-        h('button', { class: 'btn', onclick: () => { targetInput = (Rec.target && (Rec.target.host || '')) || ''; if (el('recon-target')) el('recon-target').value = targetInput; render(); } }, 'Use current tab'),
+        h('button', { class: 'btn', onclick: () => { targetInput = targetHost(); if (el('recon-target')) el('recon-target').value = targetInput; render(); } }, 'Use current tab'),
         h('button', { class: 'btn primary', onclick: () => render() }, 'Build links')
       ]),
       h('div', { class: 'small faint' }, 'Service links are constructed locally and open in new tabs. No data about your target is sent to ReconKit — only to the service you explicitly open.')
@@ -188,7 +201,17 @@ Rec.views.recon = (() => {
       out.appendChild(summary);
       renderTechStack(out);
       if (!ctx.host) {
-        out.appendChild(h('div', { class: 'card faint' }, 'Enter a target or click “Use current tab”.'));
+        const input = el('recon-target');
+        if (input) input.focus();
+        out.appendChild(h('div', { class: 'card' }, [
+          h('div', {}, 'No host yet — enter a domain, hostname, URL or IP above, or use the page you are looking at:'),
+          h('div', { class: 'row', style: 'margin-top:8px' }, [
+            h('button', { class: 'btn primary', onclick: async () => {
+              await Rec.target.refresh();
+              render();
+            } }, 'Use current page')
+          ])
+        ]));
         return;
       }
       renderQuickLookups(out, ctx);
@@ -207,9 +230,11 @@ Rec.views.recon = (() => {
     });
   }
 
-  function open(params) {
+  async function open(params) {
     if (params && params.url) targetInput = params.url;
     else if (params && params.host) targetInput = params.host;
+    // Pull a fresh target every time the view opens so the host is current.
+    try { await Rec.target.refresh(); } catch (e) { /* background sleeping */ }
     render();
   }
 

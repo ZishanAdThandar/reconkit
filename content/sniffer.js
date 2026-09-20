@@ -250,11 +250,45 @@
   const sniffer = { run };
   window.__RK_SNIFFER__ = sniffer;
 
+  // ------------------------------------------------------------------
+  // Dark reader: invert the page content (opt-in, per tab, fully local).
+  // A style element toggles an "invert everything, un-invert media" look —
+  // the classic lightweight dark mode. Removed again on a second toggle.
+  // ------------------------------------------------------------------
+  const DARK_READER_CSS = [
+    'html { background-color: #e6e6e6 !important; color-scheme: dark; filter: invert(1) hue-rotate(180deg); }',
+    'img, picture, video, canvas, svg, iframe, embed, object { filter: invert(1) hue-rotate(180deg); }'
+  ].join('\n');
+  const DARK_STYLE_ID = 'rk-darkreader';
+
+  function darkStyleEl() {
+    return document.getElementById(DARK_STYLE_ID);
+  }
+
+  function toggleDarkReader() {
+    const existing = darkStyleEl();
+    if (existing) { existing.remove(); return false; }
+    const st = document.createElement('style');
+    st.id = DARK_STYLE_ID;
+    st.setAttribute('data-reconkit', 'darkreader');
+    st.textContent = DARK_READER_CSS;
+    (document.head || document.documentElement).appendChild(st);
+    return true;
+  }
+
   // Answer on-demand sniff requests from the background (popup/analyzer view).
   // The background targets tabs where this declared content script already
   // runs, so no tabs.executeScript (removed in MV3) is needed.
   if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.onMessage) {
     browser.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+      if (msg && msg.type === 'rk:dark-toggle') {
+        sendResponse({ ok: true, dark: toggleDarkReader() });
+        return true;
+      }
+      if (msg && msg.type === 'rk:dark-query') {
+        sendResponse({ ok: true, dark: !!darkStyleEl() });
+        return true;
+      }
       if (msg && msg.type === 'rk:sniff-request') {
         run()
           .then(sendResponse)

@@ -119,8 +119,10 @@ stored locally and can be removed anytime.
 
 ## Settings
 
-- **Appearance** — System / Dark (calm) / Light (paper). The header button
-  toggles dark↔light instantly and persists the choice.
+- **Appearance** — ReconKit is dark-only. The moon button in the header
+  (or Ctrl+K → *Dark reader*) darkens the **content of the current web page**
+  with a local invert style; click again to restore it to normal. The state is
+  per tab and fully local.
 - **Optional permission** — enable *Enhanced cookie analysis* (`cookies`) with
   one click; disable the same way.
 - **Data & privacy** — clear local caches, export/import settings as JSON.

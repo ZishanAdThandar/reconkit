@@ -24,7 +24,7 @@ telemetry.
 | **Recon** | Tech stack of the current page plus one-click lookups for a host/domain/IP across 40+ free public services (BuiltWith, Shodan, Censys, crt.sh quick links; search engines, code search, archives, passive DNS, domain/IP intelligence, security assessment) — built locally, opened in new tabs |
 | **DNS / IP** | Live DNS records (A/AAAA/CNAME/MX/NS/TXT via DoH), certificate transparency & subdomain harvesting (crt.sh), ASN/network metadata (ipinfo.io) |
 | **Files** | 100 % local file analysis: magic-byte type detection, SHA-256 & MD5, Shannon entropy, detectable strings, image dimensions, PNG text chunks, JPEG EXIF (incl. GPS). External file tools are **gated behind explicit consent** |
-| **Integration** | Right-click menus (analyze/decode/hash selection, page & link actions, one-tap lookups), keyboard shortcuts (Alt+Shift+R popup, Alt+Shift+A analyzer, Ctrl+K palette), dark/light theme toggle, command palette |
+| **Integration** | Right-click menus (analyze/decode/hash selection, page & link actions, one-tap lookups), keyboard shortcuts (Alt+Shift+R popup, Alt+Shift+A analyzer, Ctrl+K palette), dark-only UI with a per-page dark reader toggle (moon button), command palette |
 
 The extension ID is `reconkit@zishanhack.com`. Firefox 115+, Manifest V3.
 
