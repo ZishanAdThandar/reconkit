@@ -3,7 +3,7 @@
  * Fuzzy (substring) navigation across tools, views and quick actions.
  */
 'use strict';
-const Rec = window.Rec = window.Rec || {};
+var Rec = window.Rec = window.Rec || {};
 Rec.palette = (() => {
   const { h, esc, el, toast } = Rec.ui;
 

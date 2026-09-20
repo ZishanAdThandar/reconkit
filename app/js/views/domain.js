@@ -5,7 +5,7 @@
  * explicit "undetermined" states.
  */
 'use strict';
-const Rec = window.Rec = window.Rec || {};
+var Rec = window.Rec = window.Rec || {};
 Rec.views = Rec.views || {};
 
 Rec.views.domain = (() => {

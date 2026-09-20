@@ -5,6 +5,7 @@
  */
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
+import fs from 'node:fs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
@@ -293,4 +294,30 @@ test('services: search chain across groups', () => {
   const ctx = globalThis.RekServices.buildContext('analytics.example.co.uk');
   const grouped = globalThis.RekServices.groupedLinks(ctx);
   assert.ok(grouped.order.includes('Search engines'));
+});
+
+test('app: no top-level const/let/class collisions across page scripts', () => {
+  // Classic (non-module) <script> tags share the global lexical scope: a
+  // top-level `const X` in two files throws "Identifier 'X' has already been
+  // declared" and aborts every later script at parse time. This is the exact
+  // bug that blanked the popup (multiple `const Rec` files). Guard it here.
+  const html = fs.readFileSync(path.join(root, 'app/app.html'), 'utf8');
+  const scripts = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map((m) => m[1]);
+  assert.ok(scripts.length >= 30, 'expected the full script set');
+  const declRe = /^(const|let|class)\s+([A-Za-z_$][A-Za-z0-9_$]*)/;
+  const seen = new Map(); // name -> [file, kind]
+  const bad = [];
+  for (const rel of scripts) {
+    const abs = path.resolve(root, 'app', rel);
+    assert.ok(fs.existsSync(abs), `script exists: ${rel}`);
+    const lines = fs.readFileSync(abs, 'utf8').split('\n');
+    for (const line of lines) {
+      if (line[0] !== 'c' && line[0] !== 'l') continue; // column-0 only
+      const m = line.match(declRe);
+      if (!m) continue;
+      if (seen.has(m[2])) bad.push(`${m[2]} declared in ${seen.get(m[2])} and ${rel}`);
+      else seen.set(m[2], rel);
+    }
+  }
+  assert.deepEqual(bad, []);
 });

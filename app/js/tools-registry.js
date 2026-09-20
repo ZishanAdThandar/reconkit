@@ -4,7 +4,7 @@
  * opts: { key, label, type: select|num|bool|text, def, options?:[{v,l}] }
  */
 'use strict';
-const Rec = window.Rec = window.Rec || {};
+var Rec = window.Rec = window.Rec || {};
 Rec.tools = (() => {
   const list = [];
   const byId = {};

@@ -4,7 +4,7 @@
  * new tabs (external services are never embedded or bypassed).
  */
 'use strict';
-const Rec = window.Rec = window.Rec || {};
+var Rec = window.Rec = window.Rec || {};
 Rec.views = Rec.views || {};
 
 Rec.views.recon = (() => {

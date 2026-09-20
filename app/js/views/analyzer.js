@@ -4,7 +4,7 @@
  * Distinguishes "detected" from "could not be determined".
  */
 'use strict';
-const Rec = window.Rec = window.Rec || {};
+var Rec = window.Rec = window.Rec || {};
 Rec.views = Rec.views || {};
 
 Rec.views.analyzer = (() => {

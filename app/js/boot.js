@@ -3,7 +3,7 @@
  * Settings, theme, target tracking, navigation, payload handoff, status bar.
  */
 'use strict';
-const Rec = window.Rec = window.Rec || {};
+var Rec = window.Rec = window.Rec || {};
 
 Rec.settings = (() => {
   const defaults = { theme: 'auto', consent: { externalFileServices: false } };

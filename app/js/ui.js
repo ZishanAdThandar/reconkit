@@ -2,12 +2,12 @@
  * ReconKit — UI helpers (small & dependency-free).
  */
 'use strict';
-const Rec = window.Rec = window.Rec || {};
+var Rec = window.Rec = window.Rec || {};
 
 Rec.ui = (() => {
 
-  /** Create an element: h('div', {class:'x', onclick}, ['text', el2]) */
-  function h(tag, attrs, kids) {
+  /** Create an element: h('div', {class:'x', onclick}, ['text', el2]) or h('div', {}, a, b) */
+  function h(tag, attrs, ...kids) {
     const el = document.createElement(tag);
     if (attrs) {
       for (const k of Object.keys(attrs)) {
@@ -19,12 +19,14 @@ Rec.ui = (() => {
         else el.setAttribute(k, v === true ? '' : v);
       }
     }
-    if (kids != null) {
-      const list = Array.isArray(kids) ? kids : [kids];
-      for (const kid of list) {
-        if (kid == null || kid === false) continue;
-        el.appendChild(typeof kid === 'string' || typeof kid === 'number' ? document.createTextNode(String(kid)) : kid);
-      }
+    const flat = [];
+    for (const kid of kids) {
+      if (Array.isArray(kid)) flat.push(...kid);
+      else flat.push(kid);
+    }
+    for (const kid of flat) {
+      if (kid == null || kid === false) continue;
+      el.appendChild(typeof kid === 'string' || typeof kid === 'number' ? document.createTextNode(String(kid)) : kid);
     }
     return el;
   }
