@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReconKit — Security Research Toolkit</title>
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="app" class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="1.5" y="1.5" width="29" height="29" rx="7" fill="#1b1814"/>
+        <rect x="1.5" y="1.5" width="29" height="29" rx="7" fill="none" stroke="#d9a05b" stroke-opacity=".6"/>
+        <circle cx="16" cy="16" r="9.5" fill="none" stroke="#d9a05b" stroke-width="1.6" stroke-opacity=".9"/>
+        <circle cx="16" cy="16" r="4.5" fill="none" stroke="#d9a05b" stroke-width="1.3" stroke-dasharray="3 2.4" stroke-opacity=".8"/>
+        <circle cx="16" cy="16" r="1.6" fill="#d9a05b"/>
+        <line x1="16" y1="2.5" x2="16" y2="7" stroke="#d9a05b" stroke-width="1.4" stroke-opacity=".8"/>
+        <line x1="16" y1="25" x2="16" y2="29.5" stroke="#d9a05b" stroke-width="1.4" stroke-opacity=".8"/>
+        <line x1="2.5" y1="16" x2="7" y2="16" stroke="#d9a05b" stroke-width="1.4" stroke-opacity=".8"/>
+        <line x1="25" y1="16" x2="29.5" y2="16" stroke="#d9a05b" stroke-width="1.4" stroke-opacity=".8"/>
+      </svg>
+      <div class="brand-text">
+        <strong>ReconKit</strong>
+        <span class="brand-sub">security research toolkit</span>
+      </div>
+    </div>
+
+    <button id="target-chip" class="chip" title="Current target — click for actions" style="margin-left:4px">
+      <span id="target-dot" class="dot off"></span>
+      <span id="target-label" class="t-label">no target</span>
+    </button>
+
+    <div class="grow"></div>
+
+    <button id="btn-open-tab" class="icon-btn" title="Open ReconKit in a full tab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3M16 3h5v5M21 3l-9 9"/></svg>
+    </button>
+    <button id="btn-palette" class="icon-btn" title="Command palette (Ctrl+K)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    </button>
+    <button id="btn-theme" class="icon-btn" title="Toggle dark / light mode"></button>
+  </header>
+
+  <nav id="nav" class="nav" aria-label="Workspace">
+    <button class="nav-item active" data-view="tools">Tools</button>
+    <button class="nav-item" data-view="analyzer">Website</button>
+    <button class="nav-item" data-view="recon">OSINT</button>
+    <button class="nav-item" data-view="domain">DNS / IP</button>
+    <button class="nav-item" data-view="files">Files</button>
+    <button class="nav-item" data-view="settings">Settings</button>
+  </nav>
+
+  <main id="view-tools" class="view"></main>
+  <main id="view-analyzer" class="view"></main>
+  <main id="view-recon" class="view"></main>
+  <main id="view-domain" class="view"></main>
+  <main id="view-files" class="view"></main>
+  <main id="view-settings" class="view"></main>
+
+  <footer class="statusbar">
+    <span id="status-dot" class="status-dot"></span>
+    <span id="status-text">Local processing — nothing is uploaded</span>
+    <span class="grow"></span>
+    <a href="https://zishanhack.com/about/" target="_blank" rel="noopener noreferrer">about</a>
+    <span>·</span>
+    <a href="https://zishanhack.com/links/" target="_blank" rel="noopener noreferrer">links</a>
+    <span>·</span>
+    <span id="version-label"></span>
+  </footer>
+</div>
+
+<div id="palette" class="palette hidden">
+  <input id="palette-input" type="text" placeholder="Type a command…" autocomplete="off">
+  <div id="palette-list" class="p-list"></div>
+</div>
+<div id="target-menu" class="target-menu hidden"></div>
+<div id="toasts" class="toasts"></div>
+
+<!-- Library layer (environment-agnostic, shared with tests) -->
+<script src="../lib/lib-core.js"></script>
+<script src="../lib/base64.js"></script>
+<script src="../lib/md5.js"></script>
+<script src="../lib/crc32.js"></script>
+<script src="../lib/urlcode.js"></script>
+<script src="../lib/htmlcode.js"></script>
+<script src="../lib/rot.js"></script>
+<script src="../lib/caesar.js"></script>
+<script src="../lib/xor.js"></script>
+<script src="../lib/jwt.js"></script>
+<script src="../lib/caseconv.js"></script>
+<script src="../lib/unicode.js"></script>
+<script src="../lib/binary.js"></script>
+<script src="../lib/classic.js"></script>
+<script src="../lib/rsa.js"></script>
+<script src="../lib/random.js"></script>
+<script src="../lib/strings.js"></script>
+<script src="../lib/entropy.js"></script>
+<script src="../lib/magic.js"></script>
+<script src="../lib/exif.js"></script>
+<script src="../lib/identify.js"></script>
+<script src="../lib/detect.js"></script>
+<script src="../services/services.js"></script>
+
+<!-- Application -->
+<script src="js/ui.js"></script>
+<script src="js/tools-registry.js"></script>
+<script src="js/views/tools.js"></script>
+<script src="js/views/analyzer.js"></script>
+<script src="js/views/recon.js"></script>
+<script src="js/views/domain.js"></script>
+<script src="js/views/files.js"></script>
+<script src="js/views/settings.js"></script>
+<script src="js/palette.js"></script>
+<script src="js/boot.js"></script>
+</body>
+</html>

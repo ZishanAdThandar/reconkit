@@ -1,0 +1,77 @@
+# Privacy
+
+ReconKit is built on a simple rule: **reconnaissance of data you are authorized
+to analyze, done locally, with every external step disclosed and opt-in.**
+
+This document is the privacy statement. It mirrors what is enforced in code and
+in `manifest.json`, and `tools/build.mjs` fails the build if the manifest ever
+grows over-reaching permissions.
+
+## Local by default
+
+All of the following run entirely inside the extension page with **no network
+access**:
+
+- Digests (SHA-1/256/384/512, MD5, CRC-32) and hash identification
+- Every cipher (ROT/Caesar/Atbash/Vigenère/XOR/Morse) and every encoder
+  (Base64/hex/URL/HTML/Unicode/binary)
+- Encryption identification, base conversion, RSA math, case transforms,
+  text statistics, random generators
+- JWT decode and HMAC verification (a secret you enter is never transmitted)
+- **All file analysis**: type detection by magic bytes, hashes, entropy,
+  strings, image dimensions, PNG text chunks, JPEG EXIF/GPS. Files never leave
+  your device through ReconKit.
+
+## No collection
+
+- No telemetry, analytics, counters, or beaconing.
+- No browsing history is stored or read beyond the *active tab* you are
+  analyzing, and only when you ask (target chip → views, sidebar actions,
+  context-menu actions).
+- Page snapshots live in an in-memory cache (30 s freshness) inside the
+  extension background process and are cleared on tab close/navigation. They
+  are never written to disk and never sent anywhere.
+- No API keys are stored or hard-coded. ReconKit uses only free, keyless,
+  public interfaces.
+
+## Targeted network usage (disclosed)
+
+| Purpose | Endpoints | When |
+| --- | --- | --- |
+| DNS records | `dns.google` DoH (also reachable at `cloudflare-dns.com`) | DNS/IP view |
+| Cert transparency / subdomains | `crt.sh` | DNS/IP view, OSINT links |
+| ASN / network metadata | `ipinfo.io` | DNS/IP view; IP hint in OSINT view |
+
+These are the only sites ReconKit *fetches from code*, and they are the only
+`host_permissions`. Every other service (search engines, Shodan, urlscan,
+VirusTotal, SecurityHeaders, …) is just a **link** in the OSINT view that opens
+in a new tab when you click it — the query is sent by your browser to that
+service, under that service’s own terms.
+
+**Additional consent paths:**
+
+- The **Files** view hides external analysis tools behind explicit consent
+  (“I understand — show services”), because using them typically means uploading
+  your file to a third party. Consent is stored locally and reversible.
+- The **optional permissions** `cookies` (cookie flags/HttpOnly visibility) and
+  `dns` (system resolver) are enabled solely by the user in the Settings view
+  and can be revoked there.
+
+## What we do not do
+
+- We do not auto-upload files, screenshots, or extracted metadata.
+- We do not read HTTP request/response bodies anywhere (the header probe uses
+  `HEAD`, and the `GET` fallback never reads the body).
+- We do not store passwords, secrets, or session tokens; cookie *values* shown
+  by the page snapshot are limited to what the page itself can see via
+  `document.cookie` and are displayed on screen only.
+- We do not run background scans; every lookup happens when you trigger it.
+
+## Review
+
+The whole extension is plain source you can read: `manifest.json`, `background/`,
+`content/`, `app/`, `lib/`, `services/`. The build validates manifest
+permissions and referenced files, and the test suite pins library behavior.
+
+If you find a leak, a over-broad request, or anything that contradicts this
+statement, please treat it as a bug and report it.
