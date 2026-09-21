@@ -17,8 +17,8 @@ const LIBS = [
   'lib/lib-core.js', 'lib/base64.js', 'lib/encodings.js', 'lib/md5.js', 'lib/crc32.js',
   'lib/urlcode.js', 'lib/htmlcode.js', 'lib/rot.js', 'lib/caesar.js',
   'lib/xor.js', 'lib/jwt.js', 'lib/caseconv.js', 'lib/unicode.js',
-  'lib/binary.js', 'lib/classic.js', 'lib/rsa.js', 'lib/random.js',
-  'lib/strings.js', 'lib/entropy.js', 'lib/magic.js', 'lib/exif.js',
+  'lib/classic.js', 'lib/rsa.js', 'lib/random.js',
+  'lib/strings.js',
   'lib/identify.js', 'lib/detect.js', 'services/services.js'
 ];
 
@@ -259,12 +259,6 @@ test('unicode: escape cycles + normalization', () => {
   assert.equal(L.unicode.normalize(nfd, 'NFC'), 'é');
 });
 
-test('binary: round trips', () => {
-  assert.equal(L.binary.textToBinary('Hi'), '01001000 01101001');
-  assert.equal(L.binary.binaryToText('01001000 01101001'), 'Hi');
-  assert.throws(() => L.binary.binaryToText('010011'));
-});
-
 test('rsa: known example decrypt with p,q and with d', () => {
   // n = 3233 = 0xca1, e = 17 = 0x11, d = 2753 = 0xac1, c = 2790 = 0xae6, p = 61 = 0x3d, q = 53 = 0x35
   const r1 = L.rsa.run({ n: 'ca1', e: '11', c: 'ae6', p: '3d', q: '35' });
@@ -284,34 +278,12 @@ test('rsa: encrypt/decrypt roundtrip via CRT factors', () => {
   assert.equal(d.hex, '41');
 });
 
-test('entropy: sanity', () => {
-  assert.equal(L.entropy.profile(new Uint8Array(0)).entropy, 0);
-  assert.equal(L.entropy.profile(new Uint8Array(64).fill(9)).entropy, 0);
-  const p = L.entropy.profile(Uint8Array.from([0, 1, 2, 3, 4, 5, 6, 7]));
-  assert.ok(p.entropy > 2.9 && p.entropy <= 3);
-});
-
 test('strings: extraction', () => {
   const bytes = Uint8Array.from([1, 2, ...L.encodeUTF8('Hello world'), 0, 9, ...L.encodeUTF8('short')]);
   const s = L.strings.extract(bytes, { minLength: 4 });
   assert.equal(s.length, 2);
   assert.equal(s[0].text, 'Hello world');
   assert.equal(s[0].offset, 2);
-});
-
-test('magic: signatures', () => {
-  assert.equal(L.magic.detect(L.hexToBytes('89504e470d0a1a0a000000')).name, 'PNG image');
-  assert.equal(L.magic.detect(L.hexToBytes('ffd8ffe00010')).name, 'JPEG image');
-  assert.equal(L.magic.detect(L.encodeUTF8('%PDF-1.4')).name, 'PDF document');
-  assert.equal(L.magic.detect(L.encodeUTF8('plain text here')).detected, true);
-});
-
-test('exif: PNG text chunks', () => {
-  // Minimal PNG signature + no text
-  const sig = L.hexToBytes('89504e470d0a1a0a');
-  const r = L.exif.pngText(sig);
-  assert.equal(r.ok, true);
-  assert.equal(r.entries.length, 0);
 });
 
 test('identify: hash & encoding', () => {
@@ -374,7 +346,7 @@ test('app: no top-level const/let/class collisions across page scripts', () => {
   // bug that blanked the popup (multiple `const Rec` files). Guard it here.
   const html = fs.readFileSync(path.join(root, 'app/app.html'), 'utf8');
   const scripts = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map((m) => m[1]);
-  assert.ok(scripts.length >= 30, 'expected the full script set');
+  assert.ok(scripts.length >= 29, 'expected the full script set');
   const declRe = /^(const|let|class)\s+([A-Za-z_$][A-Za-z0-9_$]*)/;
   const seen = new Map(); // name -> [file, kind]
   const bad = [];

@@ -174,50 +174,6 @@ Rec.tools = (() => {
   /* ------------------------------------------------------------------ *
    * Encoders
    * ------------------------------------------------------------------ */
-  $('base64', 'Encoders', 'Base64 / Base64URL',
-    'UTF-8 aware. Choose standard or URL-safe alphabet, padding optional.',
-    [
-      { key: 'mode', label: 'Operation', type: 'select', def: 'enc', options: [yesno('enc', 'Encode'), yesno('dec', 'Decode')] },
-      { key: 'urlsafe', label: 'URL-safe alphabet (-_)', type: 'bool', def: false },
-      { key: 'padding', label: 'Include padding (=)', type: 'bool', def: true }
-    ],
-    (ctx) => {
-      if (ctx.opts.mode === 'enc') {
-        return { outputs: [{ label: 'Base64', text: RekLib.base64.fromString(ctx.text, { urlsafe: !!ctx.opts.urlsafe, padding: ctx.opts.padding }), kind: 'mono' }] };
-      }
-      try {
-        const bytes = RekLib.base64.decode(ctx.text, { urlsafe: !!ctx.opts.urlsafe });
-        return { outputs: [
-          { label: 'Decoded text', text: RekLib.decodeUTF8(bytes), kind: 'mono' },
-          { label: 'Decoded hex', text: RekLib.bytesToHex(bytes), kind: 'mono' }
-        ] };
-      } catch (e) {
-        return { error: String(e.message || e) };
-      }
-    });
-
-  $('hex', 'Encoders', 'Hex',
-    'Encode bytes to hex or decode hex (tolerates 0x, spaces, colons).',
-    [
-      { key: 'mode', label: 'Operation', type: 'select', def: 'enc', options: [yesno('enc', 'Encode → hex'), yesno('dec', 'Decode ← hex')] },
-      { key: 'sep', label: 'Separator (e.g. space, colon)', type: 'text', def: '' },
-      { key: 'upper', label: 'Uppercase', type: 'bool', def: false }
-    ],
-    (ctx) => {
-      if (ctx.opts.mode === 'enc') {
-        return { outputs: [{ label: 'Hex', text: RekLib.bytesToHex(RekLib.encodeUTF8(ctx.text), { sep: ctx.opts.sep, upper: !!ctx.opts.upper }), kind: 'mono' }] };
-      }
-      try {
-        const bytes = RekLib.hexToBytes(ctx.text);
-        return { outputs: [
-          { label: 'Decoded text', text: RekLib.decodeUTF8(bytes), kind: 'mono' },
-          { label: 'Decoded hex (normalized)', text: RekLib.bytesToHex(bytes), kind: 'mono' }
-        ] };
-      } catch (e) {
-        return { error: String(e.message || e) };
-      }
-    });
-
   $('url', 'Encoders', 'URL encoding',
     'Percent-encode (component or form data) and decode, with “+” space handling.',
     [
@@ -268,23 +224,6 @@ Rec.tools = (() => {
         return { outputs: [{ label: `${pts.length} code points`, text, kind: 'mono' }] };
       }
       return { outputs: [{ label: m.toUpperCase() + ' result', text: RekLib.unicode.normalize(ctx.text, m), kind: 'mono' }] };
-    });
-
-  $('binary', 'Encoders', 'ASCII ⇄ binary',
-    'Convert text to 8-bit binary groups, or decode binary back to ASCII.',
-    [
-      { key: 'mode', label: 'Operation', type: 'select', def: 'enc', options: [yesno('enc', 'Text → binary'), yesno('dec', 'Binary → text')] },
-      { key: 'sep', label: 'Group separator', type: 'text', def: ' ' }
-    ],
-    (ctx) => {
-      if (ctx.opts.mode === 'enc') {
-        return { outputs: [{ label: 'Binary', text: RekLib.binary.textToBinary(ctx.text, { sep: ctx.opts.sep }), kind: 'mono' }] };
-      }
-      try {
-        return { outputs: [{ label: 'Text', text: RekLib.binary.binaryToText(ctx.text), kind: 'mono' }] };
-      } catch (e) {
-        return { error: String(e.message || e) };
-      }
     });
 
   $('encoding-conv', 'Encoders', 'Encoding converter',
@@ -338,7 +277,7 @@ Rec.tools = (() => {
     (ctx) => {
       const r = RekLib.identify.encoding(ctx.text);
       const text = r.hits.map((x) => `${x.name}  (confidence ${Math.round(x.confidence * 100)}%)${x.note ? ' — ' + x.note : ''}`).join('\n');
-      return { outputs: [{ label: 'Candidates', text, kind: 'mono' }], note: 'Heuristics only — verify with the dedicated tools.' };
+      return { outputs: [{ label: 'Candidates', text, kind: 'mono' }], note: 'Heuristics only — verify with the Encoding converter (or the relevant lookup tool).' };
     });
 
   $('baseconv', 'Recognition', 'Base conversion',

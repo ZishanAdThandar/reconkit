@@ -101,8 +101,12 @@ Rec.views.settings = (() => {
       ]),
       h('div', { class: 'small faint', style: 'margin-top:8px' },
         'ReconKit is a local-first research utility. Review docs in the repository for architecture, permissions and how to extend the toolset. '),
-      h('a', { class: 'link small', href: 'https://addons.mozilla.org/en-US/firefox/user/10398388/', target: '_blank', rel: 'noopener noreferrer' },
-        'Add-ons profile: ZishanAdThandar')
+      h('div', { class: 'row wrap', style: 'margin:10px 0 0;gap:8px 14px' }, [
+        h('a', { class: 'link small', href: 'https://github.com/ZishanAdThandar/reconkit', target: '_blank', rel: 'noopener noreferrer' }, 'GitHub repository'),
+        h('a', { class: 'link small', href: 'https://zishanhack.com/links/', target: '_blank', rel: 'noopener noreferrer' }, 'Linktree'),
+        h('a', { class: 'link small', href: 'https://zishanhack.com/about/', target: '_blank', rel: 'noopener noreferrer' }, 'About'),
+        h('a', { class: 'link small', href: 'https://addons.mozilla.org/en-US/firefox/user/10398388/', target: '_blank', rel: 'noopener noreferrer' }, 'Add-ons profile: ZishanAdThandar')
+      ])
     ]);
   }
 
