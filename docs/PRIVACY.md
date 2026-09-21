@@ -14,7 +14,8 @@ access**:
 
 - Digests (SHA-1/256/384/512, MD5, CRC-32) and hash identification
 - Every cipher (ROT/Caesar/Atbash/Vigenère/XOR/Morse) and every encoder
-  (Base64/hex/URL/HTML/Unicode/binary)
+  (URL/HTML/Unicode, plus the encoding converter covering
+  text/binary/octal/decimal/hex/Base32/36/58/62/64/64URL)
 - Encryption identification, base conversion, RSA math, case transforms,
   text statistics, random generators
 - JWT decode and HMAC verification (a secret you enter is never transmitted)

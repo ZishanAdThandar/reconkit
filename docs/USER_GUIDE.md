@@ -32,12 +32,10 @@ local and instant.
 | Caesar | configurable shift; digits optional |
 | Atbash / Vigenère / Morse | classic ciphers; Vigenère works `a-z/A-Z` only |
 | XOR | string or hex key; includes **single-byte key brute force**; auto text/hex output |
-| Base64 / Base64URL | UTF-8 aware; URL-safe alphabet and padding toggles; tolerant decode |
-| Hex | encode/decode; tolerates `0x`, spaces, colons |
 | URL encoding | component / form (`+`) variants, lenient decode (Latin-1 fallback) |
 | HTML entities | five core entities or all non-ASCII as numeric; decode supports named + numeric (decimal/hex) |
 | Unicode escape | surrogate / code-point styles, unescape, code-point listing, NFC/NFD/NFKC/NFKD |
-| ASCII ⇄ binary | 8-bit groups, custom separator |
+| Encoding converter | text/binary/octal/decimal/hex/Base32/Base36/Base58/Base62/Base64/Base64URL in one step |
 | JWT decoder & verifier | header/payload + readable timestamps; HS256/384/512 verify with a secret |
 | Encoding identifier | heuristic candidates for Base64 / hex / binary / URL / JWT / text |
 | Base conversion | bases 2–62; letters are case-insensitive |
@@ -45,6 +43,7 @@ local and instant.
 | Case conversion | 14 formats incl. camelCase, snake_case, CONSTANT_CASE |
 | Reverse | characters / words / lines |
 | Text statistics | counts, unique words, byte size |
+| Remove / normalize whitespace | strip all whitespace or collapse runs |
 | Random generator | UUID v4, hex blobs, readable passwords (WebCrypto) |
 
 Right-clicking a selection elsewhere in Firefox also offers *Analyze / Decode /
