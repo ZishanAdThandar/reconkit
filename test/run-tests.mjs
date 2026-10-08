@@ -320,12 +320,33 @@ test('services: link building for domain & IP targets', () => {
   assert.ok(links.some((l) => l.id === 'crtsh'));
   assert.ok(links.some((l) => l.id === 'wayback'));
   assert.ok(!links.some((l) => l.id === 'shodan-ip'));
+  // A domain with no resolved IP must not offer ipinfo (its API 404s on hostnames).
+  assert.ok(!links.some((l) => l.id === 'ipinfo'));
+  // Broken/pointless links were replaced with deep-linkable equivalents.
+  assert.ok(!links.some((l) => ['dnsdumpster', 'viewdns', 'dns-cf'].includes(l.id)));
+  assert.ok(links.some((l) => l.id === 'dns-nslookup' && l.url.includes('nslookup.io/domains/example.com/')));
+  assert.ok(links.some((l) => l.id === 'mxtoolbox' && l.url.includes('example.com')));
+  assert.ok(links.some((l) => l.id === 'rapiddns' && l.url.includes('example.com')));
+  assert.ok(links.some((l) => l.id === 'certspotter' && l.url.includes('domain=example.com')));
+  const cc = links.find((l) => l.id === 'commoncrawl');
+  assert.ok(cc && cc.url.includes('CC-MAIN-') && cc.url.includes('url=example.com') && cc.url.includes('output=json'));
+  const otx = links.find((l) => l.id === 'otx');
+  assert.ok(otx && otx.url === 'https://otx.alienvault.com/indicator/domain/example.com');
+
+  // With a resolved IP, the host context also exposes IP-targeted services.
+  const domIp = globalThis.RekServices.buildContext('https://example.com/', { ip: '93.184.216.34' });
+  const domIpLinks = globalThis.RekServices.linksFor(domIp);
+  assert.ok(domIpLinks.some((l) => l.id === 'ipinfo' && l.url === 'https://ipinfo.io/93.184.216.34'));
+  assert.ok(!domIpLinks.some((l) => l.url.includes('ipinfo.io/example.com')));
 
   const ipCtx = globalThis.RekServices.buildContext('8.8.8.8');
   assert.equal(ipCtx.isIp, true);
   const iplinks = globalThis.RekServices.linksFor(ipCtx);
   assert.ok(iplinks.some((l) => l.id === 'shodan-ip'));
   assert.ok(!iplinks.some((l) => l.id === 'crtsh'));
+  assert.ok(iplinks.some((l) => l.id === 'ipinfo' && l.url === 'https://ipinfo.io/8.8.8.8'));
+  const otxIp = iplinks.find((l) => l.id === 'otx');
+  assert.ok(otxIp && otxIp.url === 'https://otx.alienvault.com/indicator/ip/8.8.8.8');
 
   const files = globalThis.RekServices.SERVICES.filter((s) => s.requires === 'file');
   assert.equal(files.length, 0, 'file-tool services removed with the Files view');

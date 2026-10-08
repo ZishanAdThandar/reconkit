@@ -90,8 +90,10 @@ lightweight.
 > as a fixed permission, which ReconKit deliberately avoids; DNS lookups use
 > public DoH instead (see host permissions).
 
-Host permissions cover only the three direct-fetch APIs: `crt.sh`,
-`dns.google`/`cloudflare-dns.com` (DoH), and `ipinfo.io`.
+Host permissions cover only the direct-fetch APIs: `crt.sh`, `dns.google`
+(DoH), and `ipinfo.io`. The DNS/IP view also falls back to the CORS-open Cert
+Spotter API (`api.certspotter.com`) when crt.sh is overloaded — no host
+permission is needed for it.
 
 ## Constraints that shape the code
 

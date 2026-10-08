@@ -38,15 +38,16 @@ access**:
 
 | Purpose | Endpoints | When |
 | --- | --- | --- |
-| DNS records | `dns.google` DoH (also reachable at `cloudflare-dns.com`) | DNS/IP view |
-| Cert transparency / subdomains | `crt.sh` | DNS/IP view, OSINT links |
+| DNS records | `dns.google` DoH | DNS/IP view |
+| Cert transparency / subdomains | `crt.sh` (fallback: `api.certspotter.com`) | DNS/IP view, OSINT links |
 | ASN / network metadata | `ipinfo.io` | DNS/IP view; IP hint in OSINT view |
 
-These are the only sites ReconKit *fetches from code*, and they are the only
-`host_permissions`. Every other service (search engines, Shodan, urlscan,
-VirusTotal, SecurityHeaders, …) is just a **link** in the OSINT view that opens
-in a new tab when you click it — the query is sent by your browser to that
-service, under that service’s own terms.
+`crt.sh`, `dns.google` and `ipinfo.io` are the only `host_permissions`. The Cert
+Spotter fallback (`api.certspotter.com`) is used only when crt.sh fails, and is
+CORS-open, so it needs no host permission. Every other service (search engines,
+Shodan, urlscan, VirusTotal, SecurityHeaders, …) is just a **link** in the OSINT
+view that opens in a new tab when you click it — the query is sent by your
+browser to that service, under that service’s own terms.
 
 **Additional consent paths:**
 

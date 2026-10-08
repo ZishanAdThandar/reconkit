@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ReconKit \u2014 Security Research Toolkit",
   "short_name": "ReconKit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A privacy-first toolkit for security researchers and developers: crypto & text utilities, passive website analysis, OSINT lookups, DNS/ASN intelligence. All core processing happens on your machine.",
   "author": "ZishanAdThandar",
   "homepage_url": "https://github.com/ZishanAdThandar/reconkit",
@@ -27,7 +27,6 @@
     "https://crt.sh/*",
     "http://crt.sh/*",
     "https://dns.google/*",
-    "https://cloudflare-dns.com/*",
     "https://ipinfo.io/*"
   ],
   "background": {

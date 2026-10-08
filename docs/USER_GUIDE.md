@@ -99,8 +99,11 @@ Enter a hostname or IP (or use the current tab):
 
 - **DNS records** — A, AAAA, CNAME, MX, NS, TXT via Google Public DNS (DoH).
 - **Certificates & subdomains** — crt.sh transparency search, unique name list
-  (copyable) + 25 newest entries.
+  (copyable) + 25 newest entries. If crt.sh is overloaded the lookup retries and
+  then falls back to Cert Spotter.
 - **Network / ASN intelligence** — ipinfo.io: IP, rDNS, org/ASN, geo, timezone.
+  For a hostname the view resolves an A/AAAA record first and shows which IP was
+  used (ipinfo only accepts IP addresses).
 - **Related passive intelligence** — one-row shortcuts to the OSINT services
   that apply to this target.
 

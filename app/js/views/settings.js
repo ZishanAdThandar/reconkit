@@ -47,7 +47,7 @@ Rec.views.settings = (() => {
         ['Browsing history', 'Not read. Only the active tab is inspected when you ask for it.'],
         ['Page snapshots', 'Stored locally in memory (30 s cache) and used only to render analysis.'],
         ['Local processing', 'All crypto, encoding, hashing and analysis run on your device.'],
-        ['Network (opt-in)', 'DNS/IP lookups use dns.google, crt.sh and ipinfo.io. Targeted service links open in your browser when you click them.'],
+        ['Network (opt-in)', 'DNS/IP lookups use dns.google, crt.sh (with a Cert Spotter fallback) and ipinfo.io. Targeted service links open in your browser when you click them.'],
         ['Optional permissions', 'Cookies (flags/HttpOnly visibility) are opt-in only.'],
         ['API keys', 'No keys are stored or hard-coded.'],
         ['Third-party services', 'Operate under their own policies and may log your queries; review before use.']
