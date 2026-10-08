@@ -23,7 +23,7 @@ run, zip).
 
 ```
 about:debugging → This Firefox → Load Temporary Add-on
-→ dist/reconkit-1.0.1.zip   (or manifest.json for source)
+→ dist/reconkit-1.0.2.zip   (or manifest.json for source)
 ```
 
 The toolbar button opens the popup (`Alt+Shift+R`). `Alt+Shift+A` opens the

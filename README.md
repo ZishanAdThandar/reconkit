@@ -41,7 +41,7 @@ npm run icons        # regenerate icons/icon-*.png
 
 ```
 1. about:debugging → This Firefox → Load Temporary Add-on
-2. select dist/reconkit-1.0.1.zip  (or manifest.json for a dev run)
+2. select dist/reconkit-1.0.2.zip  (or manifest.json for a dev run)
 3. toolbar button opens the ReconKit popup (Alt+Shift+R)
 ```
 

@@ -1,6 +1,6 @@
 {
   "name": "reconkit",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "ReconKit — a privacy-focused Firefox extension for security research and reconnaissance: crypto & text tools, website analysis, OSINT lookups, DNS/ASN intelligence, and local file analysis.",
   "type": "module",
   "private": true,

@@ -31,8 +31,11 @@ Rec.ui = (() => {
     return el;
   }
 
-  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
-    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // h() appends string children as text nodes and sets attributes with
+  // setAttribute(), so values are never parsed as HTML. HTML-escaping here
+  // would double-encode and render entities literally (e.g. "&amp;", "&#39;").
+  // This only normalizes the value to a string; the name is kept for call sites.
+  const esc = (s) => (s == null ? '' : String(s));
 
   let toastTimer = null;
   function toast(msg, kind) {
